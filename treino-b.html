@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treino B - ACADEMIA ELIJUNIO</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="workout-page workout-b-page">
+    <!-- Overlay de Descanso -->
+    <div class="rest-overlay">
+        <div class="rest-modal">
+            <div class="rest-header">
+                <h2><i class="fas fa-couch"></i> Descanse e prepare-se</h2>
+                <p>Próximo exercício: <span class="next-exercise-name">Remada curvada barra</span></p>
+            </div>
+            
+            <div class="rest-timer">
+                <div class="timer-circle">
+                    <svg class="progress-ring" width="200" height="200">
+                        <circle class="progress-ring-circle" stroke-width="8" fill="transparent" r="90" cx="100" cy="100"/>
+                    </svg>
+                    <div class="timer-display">
+                        <span id="rest-minutes">00</span>:<span id="rest-seconds">45</span>
+                    </div>
+                </div>
+                <p class="rest-instruction">Mantenha a respiração controlada</p>
+            </div>
+
+            <div class="rest-info">
+                <div class="info-card">
+                    <i class="fas fa-dumbbell"></i>
+                    <h4>Próximo Grupo</h4>
+                    <p class="muscle-group">Costas</p>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-history"></i>
+                    <h4>Tempo de Descanso</h4>
+                    <p class="rest-type">45 segundos</p>
+                </div>
+            </div>
+
+            <button class="btn-skip-rest" id="skip-rest">
+                <i class="fas fa-forward"></i> Pular Descanso
+            </button>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="workout-container">
+        <!-- Header -->
+        <header class="workout-header">
+            <a href="index.html" class="back-button">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+            
+            <div class="workout-title">
+                <div class="workout-badge">B</div>
+                <div>
+                    <h1>Treino B</h1>
+                    <p class="workout-focus">Costas + Posterior + Bíceps</p>
+                </div>
+            </div>
+
+            <div class="workout-progress">
+                <div class="progress-info">
+                    <span>Progresso</span>
+                    <span class="progress-percent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="workout-progress-fill"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Timer Principal -->
+        <section class="main-timer-section">
+            <div class="timer-container">
+                <div class="timer-display-main">
+                    <div class="timer-digits" id="main-timer">90:00</div>
+                    <div class="timer-label">TEMPO DE TREINO</div>
+                </div>
+
+                <div class="timer-controls">
+                    <button class="timer-btn btn-start" id="start-timer">
+                        <i class="fas fa-play"></i> Iniciar
+                    </button>
+                    <button class="timer-btn btn-pause" id="pause-timer" disabled>
+                        <i class="fas fa-pause"></i> Pausar
+                    </button>
+                    <button class="timer-btn btn-reset" id="reset-timer">
+                        <i class="fas fa-redo"></i> Reiniciar
+                    </button>
+                </div>
+
+                <div class="timer-status">
+                    <div class="status-indicator" id="timer-status">
+                        <i class="fas fa-clock"></i> Pronto para começar
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lista de Exercícios -->
+        <main class="exercises-container">
+            <div class="section-header">
+                <h2><i class="fas fa-dumbbell"></i> Exercícios</h2>
+                <p class="section-subtitle">Complete cada exercício na ordem indicada</p>
+            </div>
+
+            <div class="exercises-list" id="exercises-list">
+                <!-- Exercícios serão inseridos via JavaScript -->
+            </div>
+
+            <div class="workout-stats">
+                <div class="stat-card">
+                    <i class="fas fa-check-circle"></i>
+                    <h3 id="completed-exercises">0</h3>
+                    <p>Exercícios Concluídos</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-fire"></i>
+                    <h3 id="total-sets">32</h3>
+                    <p>Séries Totais</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-bolt"></i>
+                    <h3 id="estimated-calories">380</h3>
+                    <p>Calorias Estimadas</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer do Treino -->
+        <footer class="workout-footer">
+            <div class="footer-note">
+                <i class="fas fa-info-circle"></i>
+                <p>Marque cada exercício como concluído para ativar o timer de descanso inteligente</p>
+            </div>
+            <button class="btn-finish-workout" id="finish-workout">
+                <i class="fas fa-flag-checkered"></i> Finalizar Treino
+            </button>
+        </footer>
+    </div>
+
+    <!-- Áudios -->
+    <audio id="finish-sound" preload="auto">
+        <source src="assets/audio/finish.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="letsgo-sound" preload="auto">
+        <source src="assets/audio/letsgo.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="js/exercises.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/main.js"></script>
+<script>
+    // Treino B - Dados dos exercícios com IMAGENS LOCAIS E CARROSSEL
+    const workoutBExercises = [
+        {
+            id: 1,
+            name: "Barra fixa ou puxada frente",
+            sets: "4x 6–8",
+            description: "Grande dorsal (largura)",
+            muscleGroup: "costas",
+            images: [
+                "imagens/treino-b/barrafixa.webp",
+                "imagens/treino-b/puxada.webp"
+            ]
+        },
+        {
+            id: 2,
+            name: "Remada curvada barra",
+            sets: "3x 8–10",
+            description: "Espessura",
+            muscleGroup: "costas",
+            images: [
+                "imagens/treino-b/remadacurvada.webp"
+            ]
+        },
+        {
+            id: 3,
+            name: "Remada baixa",
+            sets: "3x 10–12",
+            description: "Costas médias",
+            muscleGroup: "costas",
+            images: [
+                "imagens/treino-b/remadabaixa.webp"
+            ]
+        },
+        {
+            id: 4,
+            name: "Levantamento terra romeno",
+            sets: "4x 6–8",
+            description: "Posterior + Glúteo",
+            muscleGroup: "posterior",
+            images: [
+                "imagens/treino-b/levantamentoterra.webp"
+            ]
+        },
+        {
+            id: 5,
+            name: "Mesa flexora",
+            sets: "3x 10–12",
+            description: "Posterior",
+            muscleGroup: "posterior",
+            images: [
+                "imagens/treino-b/mesaflexora.webp"
+            ]
+        },
+        {
+            id: 6,
+            name: "Afundo andando ou no lugar",
+            sets: "3x 10 cada perna",
+            description: "Quadríceps + Glúteo",
+            muscleGroup: "posterior",
+            images: [
+                "imagens/treino-b/afundo.webp"
+            ]
+        },
+        {
+            id: 7,
+            name: "Elevação posterior (halter ou máquina)",
+            sets: "3x 12–15",
+            description: "Ombro posterior",
+            muscleGroup: "ombro",
+            images: [
+                "imagens/treino-b/elevacaoposterior.webp",
+                "imagens/treino-b/maquinaposterior.webp"
+            ]
+        },
+        {
+            id: 8,
+            name: "Encolhimento barra",
+            sets: "4x 10–12",
+            description: "Trapézio superior",
+            muscleGroup: "ombro",
+            images: [
+                "imagens/treino-b/encolhimento.webp"
+            ]
+        },
+        {
+            id: 9,
+            name: "Rosca direta barra",
+            sets: "3x 8–10",
+            description: "Cabeça curta e longa",
+            muscleGroup: "biceps",
+            images: [
+                "imagens/treino-b/roscadireta.webp"
+            ]
+        },
+        {
+            id: 10,
+            name: "Rosca alternada inclinada",
+            sets: "3x 10–12",
+            description: "Ênfase cabeça longa",
+            muscleGroup: "biceps",
+            images: [
+                "imagens/treino-b/roscainclinada.webp"
+            ]
+        }
+    ];
+    
+    // Inicializar treino B
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof initWorkout === 'function') {
+            initWorkout('B', workoutBExercises);
+        }
+    });
+</script>
+</body>
+</html>

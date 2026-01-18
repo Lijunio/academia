@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treino A - ACADEMIA ELIJUNIO</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="workout-page workout-a-page">
+    <!-- Overlay de Descanso -->
+    <div class="rest-overlay">
+        <div class="rest-modal">
+            <div class="rest-header">
+                <h2><i class="fas fa-couch"></i> Descanse e prepare-se</h2>
+                <p>Próximo exercício: <span class="next-exercise-name">Supino inclinado</span></p>
+            </div>
+            
+            <div class="rest-timer">
+                <div class="timer-circle">
+                    <svg class="progress-ring" width="200" height="200">
+                        <circle class="progress-ring-circle" stroke-width="8" fill="transparent" r="90" cx="100" cy="100"/>
+                    </svg>
+                    <div class="timer-display">
+                        <span id="rest-minutes">00</span>:<span id="rest-seconds">45</span>
+                    </div>
+                </div>
+                <p class="rest-instruction">Mantenha a respiração controlada</p>
+            </div>
+
+            <div class="rest-info">
+                <div class="info-card">
+                    <i class="fas fa-dumbbell"></i>
+                    <h4>Próximo Grupo</h4>
+                    <p class="muscle-group">Peito</p>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-history"></i>
+                    <h4>Tempo de Descanso</h4>
+                    <p class="rest-type">45 segundos</p>
+                </div>
+            </div>
+
+            <button class="btn-skip-rest" id="skip-rest">
+                <i class="fas fa-forward"></i> Pular Descanso
+            </button>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="workout-container">
+        <!-- Header -->
+        <header class="workout-header">
+            <a href="index.html" class="back-button">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+            
+            <div class="workout-title">
+                <div class="workout-badge">A</div>
+                <div>
+                    <h1>Treino A</h1>
+                    <p class="workout-focus">Peito + Quadríceps + Tríceps</p>
+                </div>
+            </div>
+
+            <div class="workout-progress">
+                <div class="progress-info">
+                    <span>Progresso</span>
+                    <span class="progress-percent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="workout-progress-fill"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Timer Principal -->
+        <section class="main-timer-section">
+            <div class="timer-container">
+                <div class="timer-display-main">
+                    <div class="timer-digits" id="main-timer">90:00</div>
+                    <div class="timer-label">TEMPO DE TREINO</div>
+                </div>
+
+                <div class="timer-controls">
+                    <button class="timer-btn btn-start" id="start-timer">
+                        <i class="fas fa-play"></i> Iniciar
+                    </button>
+                    <button class="timer-btn btn-pause" id="pause-timer" disabled>
+                        <i class="fas fa-pause"></i> Pausar
+                    </button>
+                    <button class="timer-btn btn-reset" id="reset-timer">
+                        <i class="fas fa-redo"></i> Reiniciar
+                    </button>
+                </div>
+
+                <div class="timer-status">
+                    <div class="status-indicator" id="timer-status">
+                        <i class="fas fa-clock"></i> Pronto para começar
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lista de Exercícios -->
+        <main class="exercises-container">
+            <div class="section-header">
+                <h2><i class="fas fa-dumbbell"></i> Exercícios</h2>
+                <p class="section-subtitle">Complete cada exercício na ordem indicada</p>
+            </div>
+
+            <div class="exercises-list" id="exercises-list">
+                <!-- Exercícios serão inseridos via JavaScript -->
+            </div>
+
+            <div class="workout-stats">
+                <div class="stat-card">
+                    <i class="fas fa-check-circle"></i>
+                    <h3 id="completed-exercises">0</h3>
+                    <p>Exercícios Concluídos</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-fire"></i>
+                    <h3 id="total-sets">38</h3>
+                    <p>Séries Totais</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-bolt"></i>
+                    <h3 id="estimated-calories">420</h3>
+                    <p>Calorias Estimadas</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer do Treino -->
+        <footer class="workout-footer">
+            <div class="footer-note">
+                <i class="fas fa-info-circle"></i>
+                <p>Marque cada exercício como concluído para ativar o timer de descanso inteligente</p>
+            </div>
+            <button class="btn-finish-workout" id="finish-workout">
+                <i class="fas fa-flag-checkered"></i> Finalizar Treino
+            </button>
+        </footer>
+    </div>
+
+    <!-- Áudios -->
+    <audio id="finish-sound" preload="auto">
+        <source src="assets/audio/finish.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="letsgo-sound" preload="auto">
+        <source src="assets/audio/letsgo.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="js/exercises.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/main.js"></script>
+<script>
+    // Treino A - Dados dos exercícios com IMAGENS LOCAIS E CARROSSEL
+    const workoutAExercises = [
+        {
+            id: 1,
+            name: "Supino reto (halteres)",
+            sets: "4x 6–8",
+            description: "Peitoral médio",
+            muscleGroup: "peito",
+            images: [
+                "imagens/treino-a/supinoreto.webp"
+            ]
+        },
+        {
+            id: 2,
+            name: "Supino inclinado (halteres)",
+            sets: "3x 8–10",
+            description: "Peitoral superior",
+            muscleGroup: "peito",
+            images: [
+                "imagens/treino-a/supinoinclinado.jpg"
+            ]
+        },
+        {
+            id: 3,
+            name: "Crucifixo no cabo ou máquina",
+            sets: "3x 12–15",
+            description: "Alongamento e definição do peitoral",
+            muscleGroup: "peito",
+            images: [
+                "imagens/treino-a/crossover.webp",
+                "imagens/treino-a/voador.webp"
+            ]
+        },
+        {
+            id: 4,
+            name: "Agachamento livre ou hack",
+            sets: "4x 6–8",
+            description: "Quadríceps + Glúteo",
+            muscleGroup: "quadriceps",
+            images: [
+                "imagens/treino-a/agachamentolivre.avif",
+                "imagens/treino-a/agachamentohack.webp"
+            ]
+        },
+        {
+            id: 5,
+            name: "Leg press",
+            sets: "3x 10–12",
+            description: "Quadríceps",
+            muscleGroup: "quadriceps",
+            images: [
+                "imagens/treino-a/legpress.webp"
+            ]
+        },
+        {
+            id: 6,
+            name: "Cadeira extensora",
+            sets: "3x 12–15",
+            description: "Quadríceps",
+            muscleGroup: "quadriceps",
+            images: [
+                "imagens/treino-a/cadeiraextensora.webp"
+            ]
+        },
+        {
+            id: 7,
+            name: "Desenvolvimento halteres",
+            sets: "3x 8–10",
+            description: "Ombro anterior",
+            muscleGroup: "ombro",
+            images: [
+                "imagens/treino-a/desenvolvimento.webp"
+            ]
+        },
+        {
+            id: 8,
+            name: "Elevação lateral",
+            sets: "4x 12–15",
+            description: "Ombro lateral",
+            muscleGroup: "ombro",
+            images: [
+                "imagens/treino-a/elevacaolateral.jpg",
+                "imagens/treino-a/elevacaolateralinclinado.png"
+            ]
+        },
+        {
+            id: 9,
+            name: "Tríceps testa",
+            sets: "3x 8–10",
+            description: "Cabeça longa",
+            muscleGroup: "triceps",
+            images: [
+                "imagens/treino-a/tricepstesta1.webp",
+                "imagens/treino-a/tricepstesta2.gif",
+                "imagens/treino-a/tricepstesta3.webp"
+            ]
+        },
+        {
+            id: 10,
+            name: "Tríceps corda (polia)",
+            sets: "3x 10–12",
+            description: "Cabeça lateral",
+            muscleGroup: "triceps",
+            images: [
+                "imagens/treino-a/tricepscorda.gif"
+            ]
+        },
+        {
+            id: 11,
+            name: "Tríceps mergulho banco ou paralela",
+            sets: "3x 8–10",
+            description: "Cabeça medial + força geral",
+            muscleGroup: "triceps",
+            images: [
+                "imagens/treino-a/tricepsmergulho.png",
+                "imagens/treino-a/paralelas.webp"
+            ]
+        }
+    ];
+
+    // Inicializar treino A
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof initWorkout === 'function') {
+            initWorkout('A', workoutAExercises);
+        }
+    });
+</script>
+</body>
+</html>

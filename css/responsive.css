@@ -1,0 +1,419 @@
+/* Responsividade Mobile First - CORRIGIDO (SEM MODO CLARO) */
+
+/* Forçar modo escuro sempre */
+:root {
+    color-scheme: dark;
+}
+
+/* Dispositivos muito pequenos (até 480px) */
+@media (max-width: 480px) {
+    :root {
+        --spacing-md: 1rem;
+        --spacing-lg: 1.5rem;
+        --spacing-xl: 2rem;
+    }
+
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.6rem; }
+    h3 { font-size: 1.3rem; }
+
+    .container { padding: var(--spacing-sm); }
+    
+    .main-header { 
+        padding: var(--spacing-lg); 
+        border-radius: 16px;
+        margin: var(--spacing-sm);
+    }
+    
+    .logo-container { flex-direction: column; }
+    .logo-icon { font-size: 2.5rem; }
+    
+    .workout-cards-container { 
+        grid-template-columns: 1fr;
+        padding: 0 var(--spacing-sm);
+    }
+    .workout-card { 
+        height: 320px;
+        margin: 0 auto;
+        max-width: 400px;
+    }
+    
+    .workout-header { 
+        flex-direction: column; 
+        text-align: center;
+        margin: var(--spacing-sm);
+        padding: var(--spacing-md);
+    }
+    .workout-title { justify-content: center; }
+    .workout-progress { 
+        min-width: 100%;
+        margin-top: var(--spacing-md);
+    }
+    
+    .timer-digits { font-size: 3rem; }
+    .timer-controls { flex-direction: column; }
+    .timer-btn { 
+        width: 100%; 
+        max-width: 280px;
+        padding: 14px 20px;
+    }
+    
+    .exercise-header { flex-direction: column; }
+    .exercise-images { 
+        height: 200px !important;
+        margin: var(--spacing-md) 0;
+    }
+    
+    .workout-stats { 
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+        padding: 0 var(--spacing-sm);
+    }
+    .stat-card:nth-child(3) { display: none !important; }
+    
+    .workout-footer { 
+        flex-direction: column; 
+        text-align: center;
+        margin: var(--spacing-sm);
+        padding: var(--spacing-md);
+    }
+    .footer-note { 
+        justify-content: center;
+        text-align: center;
+    }
+    
+    .rest-modal { 
+        padding: var(--spacing-md); 
+        width: 95%;
+        margin: var(--spacing-sm);
+    }
+    .timer-circle { 
+        width: 160px; 
+        height: 160px; 
+    }
+    .timer-display { font-size: 2.2rem; }
+    .rest-info { grid-template-columns: 1fr; }
+    
+    .slider-nav { 
+        width: 36px; 
+        height: 36px;
+        font-size: 1rem;
+    }
+    
+    .exercise-name {
+        font-size: 1.4rem;
+    }
+    
+    .exercise-sets {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Tablets (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .workout-cards-container { 
+        grid-template-columns: 1fr;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    .workout-card { 
+        height: 350px;
+        margin: 0 auto;
+    }
+    
+    .workout-header { 
+        flex-wrap: wrap;
+        padding: var(--spacing-lg);
+    }
+    .workout-progress { 
+        min-width: 100%; 
+        order: 3; 
+        margin-top: var(--spacing-md);
+    }
+    
+    .timer-digits { font-size: 3.5rem; }
+    
+    .exercise-header { flex-direction: column; }
+    .exercise-images { 
+        height: 220px !important;
+        margin: var(--spacing-lg) 0;
+    }
+    
+    .workout-stats { 
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 600px;
+        margin: var(--spacing-xl) auto 0;
+    }
+    .stat-card:nth-child(3) { display: none !important; }
+    
+    .rest-info { grid-template-columns: 1fr; }
+    
+    .exercises-container {
+        padding: var(--spacing-lg);
+    }
+    
+    .exercise-card {
+        padding: var(--spacing-lg);
+    }
+}
+
+/* Tablets grandes e laptops pequenos (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .workout-cards-container { 
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-lg);
+        padding: 0 var(--spacing-md);
+    }
+    
+    .timer-digits { 
+        font-size: 4rem;
+        letter-spacing: 1px;
+    }
+    
+    .exercise-images { 
+        height: 240px !important;
+        margin: var(--spacing-lg) 0;
+    }
+    
+    .workout-stats { 
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 800px;
+        margin: var(--spacing-xl) auto 0;
+    }
+    .stat-card:nth-child(3) { display: none !important; }
+    
+    .exercise-name {
+        font-size: 1.6rem;
+    }
+    
+    .main-header {
+        margin: var(--spacing-lg) var(--spacing-md);
+    }
+}
+
+/* Desktops (1025px - 1200px) */
+@media (min-width: 1025px) and (max-width: 1200px) {
+    .container { 
+        max-width: 1100px;
+        padding: var(--spacing-lg);
+    }
+    
+    .workout-container { 
+        max-width: 1100px;
+        padding: var(--spacing-lg);
+    }
+    
+    .exercise-images { 
+        height: 260px !important;
+        margin: var(--spacing-xl) 0;
+    }
+    
+    .workout-cards-container {
+        gap: var(--spacing-xl);
+        margin: var(--spacing-xl) 0;
+    }
+    
+    .workout-card {
+        height: 420px;
+    }
+}
+
+/* Desktops grandes (acima de 1200px) */
+@media (min-width: 1201px) {
+    .container { 
+        max-width: 1400px;
+        padding: var(--spacing-xl);
+    }
+    
+    .workout-container { 
+        max-width: 1200px;
+        padding: var(--spacing-xl);
+    }
+    
+    .exercise-images { 
+        height: 280px !important;
+        margin: var(--spacing-xl) 0;
+    }
+    
+    .workout-cards-container {
+        gap: var(--spacing-xl);
+        margin: var(--spacing-xl) 0;
+    }
+    
+    .main-header {
+        margin-bottom: var(--spacing-xl);
+    }
+}
+
+/* Telas muito grandes */
+@media (min-width: 1400px) {
+    .exercise-images { 
+        height: 300px !important;
+    }
+    
+    .workout-card {
+        height: 450px;
+    }
+    
+    .timer-digits {
+        font-size: 5.5rem;
+    }
+}
+
+/* Orientação paisagem em mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+    .workout-card { 
+        height: 280px;
+        max-width: 400px;
+    }
+    
+    .main-header { 
+        padding: var(--spacing-md);
+        margin: var(--spacing-sm);
+    }
+    
+    .hero-section { 
+        margin-bottom: var(--spacing-md);
+        padding: var(--spacing-md);
+    }
+    
+    .exercise-images { 
+        height: 180px !important;
+        margin: var(--spacing-md) 0;
+    }
+    
+    .rest-modal { 
+        padding: var(--spacing-md); 
+        max-height: 90vh; 
+        overflow-y: auto;
+        margin: var(--spacing-sm);
+    }
+    
+    .timer-circle {
+        width: 140px;
+        height: 140px;
+    }
+    
+    .timer-display {
+        font-size: 2rem;
+    }
+}
+
+/* Telas muito altas */
+@media (min-height: 1000px) {
+    .workout-card { 
+        height: 460px;
+        max-width: 500px;
+    }
+    
+    .exercise-images { 
+        height: 320px !important;
+        margin: var(--spacing-xl) 0;
+    }
+    
+    .main-header {
+        padding: var(--spacing-xl);
+    }
+    
+    .timer-digits {
+        font-size: 5rem;
+    }
+}
+
+/* Ajustes para impressão */
+@media print {
+    .workout-card, 
+    .back-button, 
+    .timer-controls,
+    .btn-finish-workout, 
+    .btn-skip-rest, 
+    .rest-overlay,
+    .slider-nav, 
+    .complete-checkbox {
+        display: none !important;
+    }
+    
+    body { 
+        background: white !important; 
+        color: black !important;
+        font-size: 12pt;
+    }
+    
+    .container, 
+    .workout-container { 
+        max-width: 100% !important; 
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .exercise-card { 
+        break-inside: avoid; 
+        border: 1px solid #ddd !important; 
+        margin-bottom: 1rem !important;
+        padding: 1rem !important;
+        box-shadow: none !important;
+    }
+    
+    .exercise-images {
+        display: none !important;
+    }
+    
+    h1, h2, h3 {
+        color: black !important;
+        page-break-after: avoid;
+    }
+}
+
+/* Garantias finais - modo escuro forçado */
+body {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Otimização final para imagens */
+.slider-image { 
+    object-fit: contain !important; 
+    max-width: 100%; 
+    max-height: 100%; 
+}
+
+.exercise-card { 
+    min-height: 200px; 
+}
+
+/* Indicador de múltiplas imagens */
+.exercise-card:has(.slider-nav) .exercise-name::after {
+    content: " (múltiplas variações)";
+    font-size: 0.75em;
+    color: var(--text-secondary);
+    font-weight: normal;
+    margin-left: 5px;
+}
+
+/* Suporte para modo escuro do sistema */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-primary: #0f0f0f;
+        --secondary-dark: #1a1a1a;
+        --bg-card: #222222;
+        --text-primary: #ffffff;
+        --text-secondary: #b2bec3;
+    }
+}
+
+/* Remover qualquer possibilidade de modo claro */
+@media (prefers-color-scheme: light) {
+    :root {
+        --bg-primary: #0f0f0f !important;
+        --secondary-dark: #1a1a1a !important;
+        --bg-card: #222222 !important;
+        --text-primary: #ffffff !important;
+        --text-secondary: #b2bec3 !important;
+    }
+    
+    body {
+        background-color: #0f0f0f !important;
+        color: #ffffff !important;
+    }
+}
