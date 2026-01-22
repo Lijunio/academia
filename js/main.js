@@ -92,7 +92,7 @@ class WorkoutManager {
                     <div class="checkbox-custom">
                         <i class="fas fa-check"></i>
                     </div>
-                    <span class="checkbox-label">✔ Concluído</span>
+                    <span class="checkbox-label">Concluído</span>
                 </label>
             </div>
         `;
