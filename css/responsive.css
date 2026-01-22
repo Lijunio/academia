@@ -1,4 +1,4 @@
-/* Responsividade Mobile First - CORRIGIDO (SEM MODO CLARO) */
+/* Responsividade Mobile First - SIMPLIFICADO */
 
 /* Forçar modo escuro sempre */
 :root {
@@ -32,29 +32,16 @@
         grid-template-columns: 1fr;
         padding: 0 var(--spacing-sm);
     }
+    
     .workout-card { 
         height: 320px;
         margin: 0 auto;
         max-width: 400px;
     }
     
-    /* REMOVER CARD-BADGE EM TELAS PEQUENAS */
+    /* REMOVER CARD-BADGE EM MOBILE */
     .workout-card .card-badge {
         display: none !important;
-    }
-
-    .workout-card .card-content {
-        padding: var(--spacing-md);
-        justify-content: flex-end;
-    }
-
-    .workout-card h3 {
-        margin-top: 0;
-        font-size: 1.4rem;
-    }
-    
-    .workout-card .card-muscles {
-        margin-bottom: var(--spacing-sm);
     }
 
     .workout-header { 
@@ -63,6 +50,7 @@
         margin: var(--spacing-sm);
         padding: var(--spacing-md);
     }
+    
     .workout-title { justify-content: center; }
     .workout-progress { 
         min-width: 100%;
@@ -88,7 +76,10 @@
         gap: var(--spacing-md);
         padding: 0 var(--spacing-sm);
     }
-    .stat-card:nth-child(3) { display: none !important; }
+    
+    .stat-card:nth-child(3) { 
+        display: none !important; 
+    }
     
     .workout-footer { 
         flex-direction: column; 
@@ -96,6 +87,7 @@
         margin: var(--spacing-sm);
         padding: var(--spacing-md);
     }
+    
     .footer-note { 
         justify-content: center;
         text-align: center;
@@ -106,12 +98,19 @@
         width: 95%;
         margin: var(--spacing-sm);
     }
+    
     .timer-circle { 
         width: 160px; 
         height: 160px; 
     }
-    .timer-display { font-size: 2.2rem; }
-    .rest-info { grid-template-columns: 1fr; }
+    
+    .timer-display { 
+        font-size: 2.2rem; 
+    }
+    
+    .rest-info { 
+        grid-template-columns: 1fr; 
+    }
     
     .slider-nav { 
         width: 36px; 
@@ -128,7 +127,6 @@
         font-size: 0.9rem;
     }
     
-    /* Para garantir que o conteúdo não vaze horizontalmente */
     body {
         overflow-x: hidden;
         max-width: 100vw;
@@ -146,7 +144,6 @@
         overflow-x: hidden;
     }
     
-    /* Forçar quebra de linha para textos longos */
     .logo-container h1,
     .subtitle,
     .hero-section h2,
@@ -163,24 +160,17 @@
         max-width: 500px;
         margin: 0 auto;
     }
+    
     .workout-card { 
         height: 350px;
         margin: 0 auto;
-    }
-    
-    /* REMOVER CARD-BADGE EM TABLETS TAMBÉM (OPCIONAL) */
-    .workout-card .card-badge {
-        width: 50px;
-        height: 50px;
-        font-size: 1.5rem;
-        top: var(--spacing-md);
-        right: var(--spacing-md);
     }
     
     .workout-header { 
         flex-wrap: wrap;
         padding: var(--spacing-lg);
     }
+    
     .workout-progress { 
         min-width: 100%; 
         order: 3; 
@@ -200,9 +190,6 @@
         max-width: 600px;
         margin: var(--spacing-xl) auto 0;
     }
-    .stat-card:nth-child(3) { display: none !important; }
-    
-    .rest-info { grid-template-columns: 1fr; }
     
     .exercises-container {
         padding: var(--spacing-lg);
@@ -210,44 +197,6 @@
     
     .exercise-card {
         padding: var(--spacing-lg);
-    }
-    
-    .main-header {
-        width: calc(100% - 1rem);
-        margin-left: 0.5rem;
-        margin-right: 0.5rem;
-    }
-    
-    .logo-container {
-        gap: 0.5rem;
-    }
-}
-
-/* Para telas muito pequenas (até 360px) */
-@media (max-width: 360px) {
-    .logo-container h1 {
-        font-size: 1.3rem;
-        line-height: 1.1;
-    }
-    
-    .logo-icon {
-        font-size: 1.8rem;
-    }
-    
-    .subtitle {
-        font-size: 0.85rem;
-        line-height: 1.4;
-    }
-}
-
-/* Para telas pequenas mas não tão pequenas (361px - 400px) */
-@media (min-width: 361px) and (max-width: 400px) {
-    .logo-container h1 {
-        font-size: 1.4rem;
-    }
-    
-    .logo-icon {
-        font-size: 2rem;
     }
 }
 
@@ -274,17 +223,9 @@
         max-width: 800px;
         margin: var(--spacing-xl) auto 0;
     }
-    .stat-card:nth-child(3) { display: none !important; }
     
     .exercise-name {
         font-size: 1.6rem;
-    }
-    
-    .main-header {
-        margin: var(--spacing-lg) var(--spacing-md);
-        width: calc(100% - 3rem);
-        margin-left: 1.5rem;
-        margin-right: 1.5rem;
     }
 }
 
@@ -313,12 +254,6 @@
     .workout-card {
         height: 420px;
     }
-    
-    .main-header {
-        width: calc(100% - 4rem);
-        margin-left: 2rem;
-        margin-right: 2rem;
-    }
 }
 
 /* Desktops grandes (acima de 1200px) */
@@ -341,13 +276,6 @@
     .workout-cards-container {
         gap: var(--spacing-xl);
         margin: var(--spacing-xl) 0;
-    }
-    
-    .main-header {
-        margin-bottom: var(--spacing-xl);
-        width: calc(100% - 4rem);
-        margin-left: 2rem;
-        margin-right: 2rem;
     }
 }
 
@@ -373,153 +301,18 @@
         max-width: 400px;
     }
     
-    /* REMOVER CARD-BADGE EM MODO PAISAGEM MOBILE */
-    .workout-card .card-badge {
-        width: 45px;
-        height: 45px;
-        font-size: 1.3rem;
-        top: 12px;
-        right: 12px;
-    }
-    
-    .main-header { 
-        padding: var(--spacing-md);
-        margin: var(--spacing-sm);
-    }
-    
-    .hero-section { 
-        margin-bottom: var(--spacing-md);
-        padding: var(--spacing-md);
-    }
-    
     .exercise-images { 
         height: 180px !important;
         margin: var(--spacing-md) 0;
     }
-    
-    .rest-modal { 
-        padding: var(--spacing-md); 
-        max-height: 90vh; 
-        overflow-y: auto;
-        margin: var(--spacing-sm);
-    }
-    
-    .timer-circle {
-        width: 140px;
-        height: 140px;
-    }
-    
-    .timer-display {
-        font-size: 2rem;
-    }
 }
 
-/* Em modo paisagem em mobile com largura específica */
-@media (max-height: 600px) and (orientation: landscape) and (max-width: 900px) {
-    .workout-card .card-badge {
-        width: 40px;
-        height: 40px;
-        font-size: 1.2rem;
-        top: 10px;
-        right: 10px;
-    }
-}
-
-/* Telas muito altas */
-@media (min-height: 1000px) {
-    .workout-card { 
-        height: 460px;
-        max-width: 500px;
-    }
-    
-    .exercise-images { 
-        height: 320px !important;
-        margin: var(--spacing-xl) 0;
-    }
-    
-    .main-header {
-        padding: var(--spacing-xl);
-    }
-    
-    .timer-digits {
-        font-size: 5rem;
-    }
-}
-
-/* Ajustes para impressão */
-@media print {
-    .workout-card .card-badge {
-        display: none !important;
-    }
-    
-    .workout-card, 
-    .back-button, 
-    .timer-controls,
-    .btn-finish-workout, 
-    .btn-skip-rest, 
-    .rest-overlay,
-    .slider-nav, 
-    .complete-checkbox {
-        display: none !important;
-    }
-    
-    body { 
-        background: white !important; 
-        color: black !important;
-        font-size: 12pt;
-    }
-    
-    .container, 
-    .workout-container { 
-        max-width: 100% !important; 
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-    
-    .exercise-card { 
-        break-inside: avoid; 
-        border: 1px solid #ddd !important; 
-        margin-bottom: 1rem !important;
-        padding: 1rem !important;
-        box-shadow: none !important;
-    }
-    
-    .exercise-images {
-        display: none !important;
-    }
-    
-    h1, h2, h3 {
-        color: black !important;
-        page-break-after: avoid;
-    }
-}
-
-/* Garantias finais - modo escuro forçado */
+/* Garantias finais */
 body {
     background-color: var(--bg-primary) !important;
     color: var(--text-primary) !important;
     overflow-x: hidden;
     max-width: 100vw;
-}
-
-/* Otimização final para imagens */
-.slider-image { 
-    object-fit: contain !important; 
-    max-width: 100%; 
-    max-height: 100%; 
-}
-
-.exercise-card { 
-    min-height: 200px; 
-}
-
-/* Indicador de múltiplas imagens */
-.exercise-card:has(.slider-nav) .exercise-name::after {
-    content: " (múltiplas variações)";
-    font-size: 0.75em;
-    color: var(--text-secondary);
-    font-weight: normal;
-    margin-left: 5px;
 }
 
 /* Suporte para modo escuro do sistema */

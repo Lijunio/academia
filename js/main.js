@@ -239,47 +239,50 @@ createImageSlider(images) {
         this.startRestTimer(seconds);
     }
 
-    // Iniciar timer de descanso
-    startRestTimer(seconds) {
-        const minutesDisplay = document.getElementById('rest-minutes');
-        const secondsDisplay = document.getElementById('rest-seconds');
-        const progressCircle = document.querySelector('.progress-ring-circle');
+// Iniciar timer de descanso
+startRestTimer(seconds) {
+    const minutesDisplay = document.getElementById('rest-minutes');
+    const secondsDisplay = document.getElementById('rest-seconds');
+    const progressCircle = document.querySelector('.progress-ring-circle');
+    
+    if (!minutesDisplay || !secondsDisplay || !progressCircle) return;
+    
+    let timeLeft = seconds;
+    const totalTime = seconds;
+    
+    // CORREÇÃO: Cálculo correto para viewBox 0 0 100 100 com r=45
+    const radius = 45; // Mesmo raio do novo HTML: r="45"
+    const circumference = 2 * Math.PI * radius;
+    
+    // Configurar o stroke-dasharray
+    progressCircle.style.strokeDasharray = circumference;
+    progressCircle.style.strokeDashoffset = 0;
+    
+    const updateTimer = () => {
+        if (!this.isResting) return;
         
-        if (!minutesDisplay || !secondsDisplay || !progressCircle) return;
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
         
-        let timeLeft = seconds;
-        const totalTime = seconds;
+        minutesDisplay.textContent = minutes.toString().padStart(2, '0');
+        secondsDisplay.textContent = seconds.toString().padStart(2, '0');
         
-        // Configurar animação do círculo
-        const circumference = 2 * Math.PI * 90;
-        progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
-        progressCircle.style.strokeDashoffset = circumference;
+        // CORREÇÃO: Cálculo correto do progresso
+        const progress = timeLeft / totalTime;
+        const offset = circumference * progress;
+        progressCircle.style.strokeDashoffset = circumference - offset;
         
-        const updateTimer = () => {
-            if (!this.isResting) return;
-            
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            
-            minutesDisplay.textContent = minutes.toString().padStart(2, '0');
-            secondsDisplay.textContent = seconds.toString().padStart(2, '0');
-            
-            // Atualizar progresso do círculo
-            const offset = circumference - (timeLeft / totalTime) * circumference;
-            progressCircle.style.strokeDashoffset = offset;
-            
-            if (timeLeft <= 0) {
-                this.endRestTimer();
-                return;
-            }
-            
-            timeLeft--;
-            setTimeout(updateTimer, 1000);
-        };
+        if (timeLeft <= 0) {
+            this.endRestTimer();
+            return;
+        }
         
-        updateTimer();
-    }
-
+        timeLeft--;
+        setTimeout(updateTimer, 1000);
+    };
+    
+    updateTimer();
+}
     // Finalizar timer de descanso
     endRestTimer() {
         this.isResting = false;
