@@ -8,6 +8,13 @@ class TimerManager {
         this.isRunning = false;
         this.startTime = null;
         this.pausedTime = null;
+        this.hasStarted = false; // Nova variável para controlar se já começou
+        
+        // Obter referência da música do treino
+        this.workoutMusic = document.getElementById('workout-music');
+        // Obter elementos dos botões
+        this.startBtn = document.getElementById('start-timer');
+        this.pauseBtn = document.getElementById('pause-timer');
         
         this.init();
     }
@@ -15,21 +22,19 @@ class TimerManager {
     init() {
         this.bindEvents();
         this.updateDisplay();
+        this.updateButtonStatesAndText(); // Atualizar botões
     }
 
     bindEvents() {
-        const startBtn = document.getElementById('start-timer');
-        const pauseBtn = document.getElementById('pause-timer');
+        if (this.startBtn) {
+            this.startBtn.addEventListener('click', () => this.start());
+        }
+
+        if (this.pauseBtn) {
+            this.pauseBtn.addEventListener('click', () => this.pause());
+        }
+
         const resetBtn = document.getElementById('reset-timer');
-
-        if (startBtn) {
-            startBtn.addEventListener('click', () => this.start());
-        }
-
-        if (pauseBtn) {
-            pauseBtn.addEventListener('click', () => this.pause());
-        }
-
         if (resetBtn) {
             resetBtn.addEventListener('click', () => this.reset());
         }
@@ -41,8 +46,14 @@ class TimerManager {
         this.isRunning = true;
         this.startTime = Date.now() - (this.totalTime - this.timeLeft) * 1000;
         
+        // Tocar música do treino APENAS na primeira vez
+        if (!this.hasStarted) {
+            this.playWorkoutMusicOnce();
+            this.hasStarted = true;
+        }
+        
         // Atualizar interface
-        this.updateButtonStates();
+        this.updateButtonStatesAndText();
         this.updateTimerStatus('Treino em andamento', 'running');
 
         // Iniciar contagem regressiva
@@ -64,27 +75,108 @@ class TimerManager {
         this.pausedTime = this.timeLeft;
         
         // Atualizar interface
-        this.updateButtonStates();
+        this.updateButtonStatesAndText();
         this.updateTimerStatus('Treino pausado', 'paused');
     }
 
     reset() {
         this.isRunning = false;
+        this.hasStarted = false; // Resetar flag
         clearInterval(this.timerInterval);
         this.timeLeft = this.totalTime;
         this.startTime = null;
         this.pausedTime = null;
         
+        // Parar e resetar música do treino
+        this.stopWorkoutMusic();
+        
         // Atualizar interface
         this.updateDisplay();
-        this.updateButtonStates();
+        this.updateButtonStatesAndText();
         this.updateTimerStatus('Pronto para começar', 'idle');
         
-        // Parar qualquer som
+        // Parar qualquer som de finalização
         const finishSound = document.getElementById('finish-sound');
         if (finishSound) {
             finishSound.pause();
             finishSound.currentTime = 0;
+        }
+    }
+
+    // Função para tocar música do treino UMA VEZ
+    playWorkoutMusicOnce() {
+        if (this.workoutMusic) {
+            // Verificar se o áudio está carregado
+            if (this.workoutMusic.readyState >= 2) {
+                this.workoutMusic.currentTime = 0;
+                this.workoutMusic.play().catch(e => {
+                    console.log("Erro ao tocar música do treino:", e);
+                    // Tentar com volume baixo para evitar restrições do navegador
+                    this.workoutMusic.volume = 0.1;
+                    this.workoutMusic.play().catch(e2 => console.log("Segunda tentativa falhou:", e2));
+                });
+            } else {
+                console.log("Música do treino ainda não carregada");
+                // Tentar carregar novamente
+                this.workoutMusic.load();
+                this.workoutMusic.addEventListener('canplaythrough', () => {
+                    this.workoutMusic.play().catch(e => console.log("Erro após carregar música:", e));
+                }, { once: true });
+            }
+        }
+    }
+
+    stopWorkoutMusic() {
+        if (this.workoutMusic) {
+            this.workoutMusic.pause();
+            this.workoutMusic.currentTime = 0;
+        }
+    }
+
+    // Atualizar estados e texto dos botões
+    updateButtonStatesAndText() {
+        // Lógica para o botão Iniciar/Continuar
+        if (this.startBtn) {
+            if (this.isRunning) {
+                // Quando está rodando, esconder o botão
+                this.startBtn.style.display = 'none';
+                this.startBtn.disabled = true;
+                this.startBtn.style.opacity = '0.5';
+                this.startBtn.style.cursor = 'not-allowed';
+            } else {
+                // Quando não está rodando
+                this.startBtn.style.display = 'flex';
+                this.startBtn.disabled = false;
+                this.startBtn.style.opacity = '1';
+                this.startBtn.style.cursor = 'pointer';
+                
+                // Definir texto apropriado
+                if (this.hasStarted && this.timeLeft < this.totalTime) {
+                    // Já começou antes e está pausado
+                    this.startBtn.innerHTML = '<i class="fas fa-play"></i> Continuar';
+                } else {
+                    // Nunca começou ou foi resetado
+                    this.startBtn.innerHTML = '<i class="fas fa-play"></i> Iniciar';
+                }
+            }
+        }
+
+        // Lógica para o botão Pausar
+        if (this.pauseBtn) {
+            if (this.isRunning) {
+                // Quando está rodando, mostrar botão Pausar
+                this.pauseBtn.style.display = 'flex';
+                this.pauseBtn.disabled = false;
+                this.pauseBtn.style.opacity = '1';
+                this.pauseBtn.style.cursor = 'pointer';
+                this.pauseBtn.innerHTML = '<i class="fas fa-pause"></i> Pausar';
+            } else {
+                // Quando não está rodando, esconder botão Pausar
+                this.pauseBtn.style.display = 'none';
+                this.pauseBtn.disabled = true;
+                this.pauseBtn.style.opacity = '0.5';
+                this.pauseBtn.style.cursor = 'not-allowed';
+            }
         }
     }
 
@@ -106,33 +198,6 @@ class TimerManager {
             timerElement.style.background = 'linear-gradient(90deg, #ff2e2e, #2e5bff)';
             timerElement.style.webkitBackgroundClip = 'text';
             timerElement.style.webkitTextFillColor = 'transparent';
-        }
-    }
-
-    updateButtonStates() {
-        const startBtn = document.getElementById('start-timer');
-        const pauseBtn = document.getElementById('pause-timer');
-
-        if (startBtn) {
-            startBtn.disabled = this.isRunning;
-            if (this.isRunning) {
-                startBtn.style.opacity = '0.5';
-                startBtn.style.cursor = 'not-allowed';
-            } else {
-                startBtn.style.opacity = '1';
-                startBtn.style.cursor = 'pointer';
-            }
-        }
-
-        if (pauseBtn) {
-            pauseBtn.disabled = !this.isRunning;
-            if (!this.isRunning) {
-                pauseBtn.style.opacity = '0.5';
-                pauseBtn.style.cursor = 'not-allowed';
-            } else {
-                pauseBtn.style.opacity = '1';
-                pauseBtn.style.cursor = 'pointer';
-            }
         }
     }
 
@@ -164,10 +229,11 @@ class TimerManager {
 
     handleTimeUp() {
         this.isRunning = false;
+        this.hasStarted = false; // Resetar para permitir iniciar novamente
         clearInterval(this.timerInterval);
         
         // Atualizar interface
-        this.updateButtonStates();
+        this.updateButtonStatesAndText();
         this.updateTimerStatus('Treino finalizado!', 'finished');
         
         // Reproduzir som de finalização
