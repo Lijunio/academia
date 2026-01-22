@@ -1,4 +1,4 @@
-// ACADEMIA ELIJUNIO - Timer Manager
+// ACADEMIA ELIJUNIO - Timer Manager (COM WHATSAPP)
 
 class TimerManager {
     constructor() {
@@ -50,6 +50,9 @@ class TimerManager {
         if (!this.hasStarted) {
             this.playWorkoutMusicOnce();
             this.hasStarted = true;
+            
+            // ENVIAR MENSAGEM PARA WHATSAPP APENAS NA PRIMEIRA VEZ
+            this.sendWhatsAppMessage();
         }
         
         // Atualizar interface
@@ -65,6 +68,28 @@ class TimerManager {
                 this.handleTimeUp();
             }
         }, 1000);
+    }
+
+    // ENVIAR MENSAGEM PARA WHATSAPP
+    sendWhatsAppMessage() {
+        try {
+            // Número fornecido por você
+            const phoneNumber = "31997077639";
+            
+            // Mensagem exata que você pediu
+            const message = "Boraaa, hora do show porra uhuuuuu, biirlllll!";
+            
+            // URL do WhatsApp (formato: 55 (Brasil) + DDD + número)
+            const whatsappURL = `https://wa.me/55${phoneNumber}?text=${encodeURIComponent(message)}`;
+            
+            // Abrir WhatsApp em nova janela
+            window.open(whatsappURL, '_blank', 'noopener,noreferrer');
+            
+            console.log("✅ Mensagem WhatsApp enviada para: 55" + phoneNumber);
+            
+        } catch (error) {
+            console.error("❌ Erro ao enviar mensagem WhatsApp:", error);
+        }
     }
 
     pause() {
