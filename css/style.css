@@ -744,8 +744,12 @@ h3 {
     font-size: 2.5rem;
 }
 
+/* CORREÇÃO: Ícone do título no Treino B */
 .workout-b-page .section-header h2 i {
     background: var(--gradient-blue);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 .section-subtitle {
@@ -909,7 +913,7 @@ h3 {
     opacity: 1;
 }
 
-/* Controles do carrossel */
+/* Controles do carrossel - ALTERAÇÕES APLICADAS AQUI */
 .slider-nav {
     position: absolute;
     top: 50%;
@@ -927,6 +931,15 @@ h3 {
     justify-content: center;
     transition: all var(--transition-fast);
     z-index: 10;
+}
+
+/* Reduzir botões em 20% em telas pequenas */
+@media (max-width: 768px) {
+    .slider-nav {
+        width: 35px;  /* 80% de 44px */
+        height: 35px;
+        font-size: 0.96rem; /* 80% de 1.2rem */
+    }
 }
 
 .slider-nav:hover {
@@ -949,7 +962,7 @@ h3 {
     right: 12px;
 }
 
-/* Dots */
+/* Dots - Esconder em telas pequenas - ALTERAÇÃO APLICADA AQUI */
 .slider-dots {
     position: absolute;
     bottom: 16px;
@@ -962,6 +975,13 @@ h3 {
     padding: 12px;
     background: linear-gradient(transparent, rgba(0, 0, 0, 0.5));
     border-radius: 0 0 var(--border-radius-sm) var(--border-radius-sm);
+}
+
+/* Esconder dots em telas menores que 768px */
+@media (max-width: 768px) {
+    .slider-dots {
+        display: none;
+    }
 }
 
 .slider-dot {
@@ -1075,8 +1095,12 @@ h3 {
     color: transparent;
 }
 
+/* CORREÇÃO: Ícones dos stat cards no Treino B */
 .workout-b-page .stat-card i {
     background: var(--gradient-blue);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 .stat-card h3 {
