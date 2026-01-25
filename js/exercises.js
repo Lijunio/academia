@@ -10,15 +10,15 @@ class ExercisesManager {
 
     getWorkoutAExercises() {
         return [
+            // PEITO (3 PORÇÕES)
             {
                 id: 1,
-                name: "Supino reto (halteres)",
+                name: "Supino reto (barra)",
                 sets: "4x 6–8",
                 description: "Peitoral médio",
                 muscleGroup: "peito",
                 images: [
-                    "https://images.unsplash.com/photo-1534367507877-0edd93bd013b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-                    "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    "imagens/treino-a/supinoreto.webp"
                 ]
             },
             {
@@ -28,98 +28,127 @@ class ExercisesManager {
                 description: "Peitoral superior",
                 muscleGroup: "peito",
                 images: [
-                    "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    "imagens/treino-a/supinoinclinado.jpg"
                 ]
             },
             {
                 id: 3,
-                name: "Crucifixo no cabo ou máquina",
+                name: "Crucifixo cabo ou máquina",
                 sets: "3x 12–15",
                 description: "Alongamento e definição do peitoral",
                 muscleGroup: "peito",
                 images: [
-                    "https://images.unsplash.com/photo-1598974357801-cbca100e5d10?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    "imagens/treino-a/crossover.webp",
+                    "imagens/treino-a/voador.webp"
                 ]
             },
+            // OMBRO (ANTERIOR + LATERAL)
             {
                 id: 4,
-                name: "Agachamento livre ou hack",
-                sets: "4x 6–8",
-                description: "Quadríceps + Glúteo",
-                muscleGroup: "quadriceps",
-                images: [
-                    "https://images.unsplash.com/photo-1598974357801-cbca100e5d10?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-                    "https://images.unsplash.com/photo-1534367507877-0edd93bd013b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                ]
-            },
-            {
-                id: 5,
-                name: "Leg press",
-                sets: "3x 10–12",
-                description: "Quadríceps",
-                muscleGroup: "quadriceps",
-                images: [
-                    "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                ]
-            },
-            {
-                id: 6,
-                name: "Cadeira extensora",
-                sets: "3x 12–15",
-                description: "Quadríceps",
-                muscleGroup: "quadriceps",
-                images: [
-                    "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                ]
-            },
-            {
-                id: 7,
                 name: "Desenvolvimento halteres",
                 sets: "3x 8–10",
                 description: "Ombro anterior",
                 muscleGroup: "ombro",
                 images: [
-                    "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    "imagens/treino-a/desenvolvimento.webp"
                 ]
             },
             {
-                id: 8,
+                id: 5,
                 name: "Elevação lateral",
                 sets: "4x 12–15",
                 description: "Ombro lateral",
                 muscleGroup: "ombro",
                 images: [
-                    "https://images.unsplash.com/photo-1534367507877-0edd93bd013b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    "imagens/treino-a/elevacaolateral.jpg",
+                    "imagens/treino-a/elevacaolateralinclinado.png"
                 ]
             },
+            // TRÍCEPS (3 CABEÇAS)
             {
-                id: 9,
-                name: "Tríceps testa (barra W)",
+                id: 6,
+                name: "Tríceps testa",
                 sets: "3x 8–10",
                 description: "Cabeça longa",
                 muscleGroup: "triceps",
                 images: [
-                    "https://images.unsplash.com/photo-1598974357801-cbca100e5d10?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    "imagens/treino-a/tricepstesta1.webp",
+                    "imagens/treino-a/tricepstesta2.gif",
+                    "imagens/treino-a/tricepstesta3.webp"
                 ]
             },
             {
-                id: 10,
-                name: "Tríceps corda (polia)",
+                id: 7,
+                name: "Tríceps corda",
                 sets: "3x 10–12",
                 description: "Cabeça lateral",
                 muscleGroup: "triceps",
                 images: [
-                    "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    "imagens/treino-a/tricepscorda.gif"
                 ]
             },
             {
-                id: 11,
-                name: "Tríceps mergulho banco ou paralela",
+                id: 8,
+                name: "Mergulho banco/paralela",
                 sets: "3x 8–10",
                 description: "Cabeça medial + força geral",
                 muscleGroup: "triceps",
                 images: [
-                    "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    "imagens/treino-a/tricepsmergulho.png",
+                    "imagens/treino-a/paralelas.webp"
+                ]
+            },
+            // QUADRÍCEPS + GLÚTEO
+            {
+                id: 9,
+                name: "Agachamento livre ou hack",
+                sets: "4x 6–8",
+                description: "Quadríceps + Glúteo",
+                muscleGroup: "quadriceps",
+                images: [
+                    "imagens/treino-a/agachamentolivre.avif",
+                    "imagens/treino-a/agachamentohack.webp"
+                ]
+            },
+            {
+                id: 10,
+                name: "Leg press",
+                sets: "3x 10–12",
+                description: "Quadríceps",
+                muscleGroup: "quadriceps",
+                images: [
+                    "imagens/treino-a/legpress.webp"
+                ]
+            },
+            {
+                id: 11,
+                name: "Cadeira extensora",
+                sets: "3x 12–15",
+                description: "Quadríceps",
+                muscleGroup: "quadriceps",
+                images: [
+                    "imagens/treino-a/cadeiraextensora.webp"
+                ]
+            },
+            // ADUTOR / ABDUTOR
+            {
+                id: 12,
+                name: "Cadeira adutora",
+                sets: "3x 12–15",
+                description: "Adutores da coxa",
+                muscleGroup: "adutor",
+                images: [
+                    "imagens/treino-a/cadeiraadutora.webp"
+                ]
+            },
+            {
+                id: 13,
+                name: "Cadeira abdutora",
+                sets: "3x 12–15",
+                description: "Abdutores da coxa",
+                muscleGroup: "abdutor",
+                images: [
+                    "imagens/treino-a/cadeiraabdutora.gif"
                 ]
             }
         ];
@@ -127,6 +156,7 @@ class ExercisesManager {
 
     getWorkoutBExercises() {
         return [
+            // COSTAS (LARGURA + ESPESSURA)
             {
                 id: 1,
                 name: "Barra fixa ou puxada frente",
@@ -134,8 +164,8 @@ class ExercisesManager {
                 description: "Grande dorsal (largura)",
                 muscleGroup: "costas",
                 images: [
-                    "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-                    "https://images.unsplash.com/photo-1534367507877-0edd93bd013b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    "imagens/treino-b/barrafixa.webp",
+                    "imagens/treino-b/puxadafrente.jpg"
                 ]
             },
             {
@@ -145,7 +175,7 @@ class ExercisesManager {
                 description: "Espessura",
                 muscleGroup: "costas",
                 images: [
-                    "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    "imagens/treino-b/remadacurvada.jpg"
                 ]
             },
             {
@@ -155,78 +185,125 @@ class ExercisesManager {
                 description: "Costas médias",
                 muscleGroup: "costas",
                 images: [
-                    "https://images.unsplash.com/photo-1598974357801-cbca100e5d10?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    "imagens/treino-b/remadabaixa.webp"
                 ]
             },
+            // OMBRO POSTERIOR + TRAPÉZIO
             {
                 id: 4,
-                name: "Levantamento terra romeno",
-                sets: "4x 6–8",
-                description: "Posterior + Glúteo",
-                muscleGroup: "posterior",
-                images: [
-                    "https://images.unsplash.com/photo-1598974357801-cbca100e5d10?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-                    "https://images.unsplash.com/photo-1534367507877-0edd93bd013b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                ]
-            },
-            {
-                id: 5,
-                name: "Mesa flexora",
-                sets: "3x 10–12",
-                description: "Posterior",
-                muscleGroup: "posterior",
-                images: [
-                    "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                ]
-            },
-            {
-                id: 6,
-                name: "Afundo andando ou no lugar",
-                sets: "3x 10 cada perna",
-                description: "Quadríceps + Glúteo",
-                muscleGroup: "posterior",
-                images: [
-                    "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                ]
-            },
-            {
-                id: 7,
-                name: "Elevação posterior (halter ou máquina)",
+                name: "Elevação posterior",
                 sets: "3x 12–15",
                 description: "Ombro posterior",
                 muscleGroup: "ombro",
                 images: [
-                    "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    "imagens/treino-b/elevacaoposterior.gif",
+                    "imagens/treino-b/maquinaposterior.gif"
                 ]
             },
             {
-                id: 8,
+                id: 5,
                 name: "Encolhimento barra",
                 sets: "4x 10–12",
                 description: "Trapézio superior",
                 muscleGroup: "ombro",
                 images: [
-                    "https://images.unsplash.com/photo-1534367507877-0edd93bd013b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    "imagens/treino-b/encolhimento.gif"
                 ]
             },
+            // BÍCEPS
             {
-                id: 9,
-                name: "Rosca direta barra",
+                id: 6,
+                name: "Rosca direta",
                 sets: "3x 8–10",
                 description: "Cabeça curta e longa",
                 muscleGroup: "biceps",
                 images: [
-                    "https://images.unsplash.com/photo-1598974357801-cbca100e5d10?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    "imagens/treino-b/roscadireta.gif"
                 ]
             },
             {
-                id: 10,
+                id: 7,
                 name: "Rosca alternada inclinada",
                 sets: "3x 10–12",
                 description: "Ênfase cabeça longa",
                 muscleGroup: "biceps",
                 images: [
-                    "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    "imagens/treino-b/roscainclinada.gif"
+                ]
+            },
+            // ANTEBRAÇO
+            {
+                id: 8,
+                name: "Rosca punho",
+                sets: "3x 15–20",
+                description: "Flexores do antebraço",
+                muscleGroup: "antebraco",
+                images: [
+                "imagens/treino-b/roscapunho1.gif",
+                "imagens/treino-b/roscapunho2.gif"
+                ]
+            },
+            {
+                id: 9,
+                name: "Rosca punho reversa",
+                sets: "3x 15–20",
+                description: "Extensores do antebraço",
+                muscleGroup: "antebraco",
+                images: [
+                    "imagens/treino-b/roscapunho-reversa1.gif",
+                    "imagens/treino-b/roscapunho-reversa2.gif"
+                ]
+            },
+            // POSTERIOR + GLÚTEO
+            {
+                id: 10,
+                name: "Levantamento terra romeno",
+                sets: "4x 6–8",
+                description: "Posterior + Glúteo",
+                muscleGroup: "posterior",
+                images: [
+                    "imagens/treino-b/terra-romeno.webp"
+                ]
+            },
+            {
+                id: 11,
+                name: "Mesa flexora",
+                sets: "3x 10–12",
+                description: "Posterior",
+                muscleGroup: "posterior",
+                images: [
+                    "imagens/treino-b/mesaflexora.webp"
+                ]
+            },
+            {
+                id: 12,
+                name: "Afundo andando ou no lugar",
+                sets: "3x 10 cada perna",
+                description: "Quadríceps + Glúteo",
+                muscleGroup: "posterior",
+                images: [
+                    "imagens/treino-b/afundo.gif"
+                ]
+            },
+            // PANTURRILHAS
+            {
+                id: 13,
+                name: "Panturrilha em pé",
+                sets: "4x 10–15",
+                description: "Panturrilha (gastrocnêmio)",
+                muscleGroup: "panturrilha",
+                images: [
+                    "imagens/treino-b/panturrilha-pe.gif"
+                ]
+            },
+            {
+                id: 14,
+                name: "Panturrilha sentada",
+                sets: "3x 15–20",
+                description: "Panturrilha (sóleo)",
+                muscleGroup: "panturrilha",
+                images: [
+                    "imagens/treino-b/panturrilha-sentada.gif"
                 ]
             }
         ];
@@ -255,12 +332,16 @@ class ExercisesManager {
     getMuscleGroupColor(muscleGroup) {
         const colors = {
             'peito': '#ff2e2e',
-            'quadriceps': '#00d26a',
             'ombro': '#2e5bff',
             'triceps': '#ff6b00',
-            'costas': '#9c27b0',
-            'posterior': '#2196f3',
-            'biceps': '#ff9800'
+            'quadriceps': '#00d26a',
+            'adutor': '#9c27b0',
+            'abdutor': '#7b1fa2',
+            'costas': '#2196f3',
+            'biceps': '#ff9800',
+            'antebraco': '#795548',
+            'posterior': '#4caf50',
+            'panturrilha': '#607d8b'
         };
         
         return colors[muscleGroup] || '#b0b0b0';
@@ -269,12 +350,16 @@ class ExercisesManager {
     getMuscleGroupName(muscleGroup) {
         const names = {
             'peito': 'Peito',
-            'quadriceps': 'Quadríceps',
             'ombro': 'Ombro',
             'triceps': 'Tríceps',
+            'quadriceps': 'Quadríceps',
+            'adutor': 'Adutor',
+            'abdutor': 'Abdutor',
             'costas': 'Costas',
+            'biceps': 'Bíceps',
+            'antebraco': 'Antebraço',
             'posterior': 'Posterior',
-            'biceps': 'Bíceps'
+            'panturrilha': 'Panturrilha'
         };
         
         return names[muscleGroup] || muscleGroup;

@@ -131,7 +131,7 @@
                 </div>
                 <div class="stat-card">
                     <i class="fas fa-fire"></i>
-                    <h3 id="total-sets">38</h3>
+                    <h3 id="total-sets">44</h3>
                     <p>Séries Totais</p>
                 </div>
             </div>
@@ -166,9 +166,10 @@
 <script>
     // Treino A - Dados dos exercícios com IMAGENS LOCAIS E CARROSSEL
     const workoutAExercises = [
+        // PEITO (3 PORÇÕES)
         {
             id: 1,
-            name: "Supino reto (halteres)",
+            name: "Supino reto (barra)",
             sets: "4x 6–8",
             description: "Peitoral médio",
             muscleGroup: "peito",
@@ -188,7 +189,7 @@
         },
         {
             id: 3,
-            name: "Crucifixo no cabo ou máquina",
+            name: "Crucifixo cabo ou máquina",
             sets: "3x 12–15",
             description: "Alongamento e definição do peitoral",
             muscleGroup: "peito",
@@ -197,39 +198,9 @@
                 "imagens/treino-a/voador.webp"
             ]
         },
+        // OMBRO (ANTERIOR + LATERAL)
         {
             id: 4,
-            name: "Agachamento livre ou hack",
-            sets: "4x 6–8",
-            description: "Quadríceps + Glúteo",
-            muscleGroup: "quadriceps",
-            images: [
-                "imagens/treino-a/agachamentolivre.avif",
-                "imagens/treino-a/agachamentohack.webp"
-            ]
-        },
-        {
-            id: 5,
-            name: "Leg press",
-            sets: "3x 10–12",
-            description: "Quadríceps",
-            muscleGroup: "quadriceps",
-            images: [
-                "imagens/treino-a/legpress.webp"
-            ]
-        },
-        {
-            id: 6,
-            name: "Cadeira extensora",
-            sets: "3x 12–15",
-            description: "Quadríceps",
-            muscleGroup: "quadriceps",
-            images: [
-                "imagens/treino-a/cadeiraextensora.webp"
-            ]
-        },
-        {
-            id: 7,
             name: "Desenvolvimento halteres",
             sets: "3x 8–10",
             description: "Ombro anterior",
@@ -239,7 +210,7 @@
             ]
         },
         {
-            id: 8,
+            id: 5,
             name: "Elevação lateral",
             sets: "4x 12–15",
             description: "Ombro lateral",
@@ -249,8 +220,9 @@
                 "imagens/treino-a/elevacaolateralinclinado.png"
             ]
         },
+        // TRÍCEPS (3 CABEÇAS)
         {
-            id: 9,
+            id: 6,
             name: "Tríceps testa",
             sets: "3x 8–10",
             description: "Cabeça longa",
@@ -262,8 +234,8 @@
             ]
         },
         {
-            id: 10,
-            name: "Tríceps corda (polia)",
+            id: 7,
+            name: "Tríceps corda",
             sets: "3x 10–12",
             description: "Cabeça lateral",
             muscleGroup: "triceps",
@@ -272,14 +244,67 @@
             ]
         },
         {
-            id: 11,
-            name: "Tríceps mergulho banco ou paralela",
+            id: 8,
+            name: "Mergulho banco/paralela",
             sets: "3x 8–10",
             description: "Cabeça medial + força geral",
             muscleGroup: "triceps",
             images: [
                 "imagens/treino-a/tricepsmergulho.png",
                 "imagens/treino-a/paralelas.webp"
+            ]
+        },
+        // QUADRÍCEPS + GLÚTEO
+        {
+            id: 9,
+            name: "Agachamento livre ou hack",
+            sets: "4x 6–8",
+            description: "Quadríceps + Glúteo",
+            muscleGroup: "quadriceps",
+            images: [
+                "imagens/treino-a/agachamentolivre.avif",
+                "imagens/treino-a/agachamentohack.webp"
+            ]
+        },
+        {
+            id: 10,
+            name: "Leg press",
+            sets: "3x 10–12",
+            description: "Quadríceps",
+            muscleGroup: "quadriceps",
+            images: [
+                "imagens/treino-a/legpress.webp"
+            ]
+        },
+        {
+            id: 11,
+            name: "Cadeira extensora",
+            sets: "3x 12–15",
+            description: "Quadríceps",
+            muscleGroup: "quadriceps",
+            images: [
+                "imagens/treino-a/cadeiraextensora.webp"
+            ]
+        },
+        // ADUTOR / ABDUTOR
+        {
+            id: 12,
+            name: "Cadeira adutora",
+            sets: "3x 12–15",
+            description: "Adutores da coxa",
+            muscleGroup: "adutor",
+            images: [
+                "imagens/treino-a/cadeiraadutora.webp"
+            ]
+        },
+        {
+            id: 13,
+            name: "Cadeira abdutora",
+            sets: "3x 12–15",
+            description: "Abdutores da coxa",
+            muscleGroup: "abdutor",
+            images: [
+                "imagens/treino-a/cadeiraabdutora.gif"
             ]
         }
     ];

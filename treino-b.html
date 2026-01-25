@@ -131,7 +131,7 @@
                 </div>
                 <div class="stat-card">
                     <i class="fas fa-fire"></i>
-                    <h3 id="total-sets">32</h3>
+                    <h3 id="total-sets">47</h3>
                     <p>Séries Totais</p>
                 </div>
             </div>
@@ -166,6 +166,7 @@
 <script>
     // Treino B - Dados dos exercícios com IMAGENS LOCAIS E CARROSSEL
     const workoutBExercises = [
+        // COSTAS (LARGURA + ESPESSURA)
         {
             id: 1,
             name: "Barra fixa ou puxada frente",
@@ -197,40 +198,10 @@
                 "imagens/treino-b/remadabaixa.gif"
             ]
         },
+        // OMBRO POSTERIOR + TRAPÉZIO
         {
             id: 4,
-            name: "Levantamento terra romeno ou Stiff",
-            sets: "4x 6–8",
-            description: "Posterior + Glúteo",
-            muscleGroup: "posterior",
-            images: [
-                "imagens/treino-b/levantamentoterra.gif",
-                "imagens/treino-b/stiff.gif"
-            ]
-        },
-        {
-            id: 5,
-            name: "Mesa flexora",
-            sets: "3x 10–12",
-            description: "Posterior",
-            muscleGroup: "posterior",
-            images: [
-                "imagens/treino-b/mesaflexora.webp"
-            ]
-        },
-        {
-            id: 6,
-            name: "Afundo andando ou no lugar",
-            sets: "3x 10 cada perna",
-            description: "Quadríceps + Glúteo",
-            muscleGroup: "posterior",
-            images: [
-                "imagens/treino-b/afundo.gif"
-            ]
-        },
-        {
-            id: 7,
-            name: "Elevação posterior (halter ou máquina)",
+            name: "Elevação posterior",
             sets: "3x 12–15",
             description: "Ombro posterior",
             muscleGroup: "ombro",
@@ -240,7 +211,7 @@
             ]
         },
         {
-            id: 8,
+            id: 5,
             name: "Encolhimento barra",
             sets: "4x 10–12",
             description: "Trapézio superior",
@@ -249,9 +220,10 @@
                 "imagens/treino-b/encolhimento.gif"
             ]
         },
+        // BÍCEPS
         {
-            id: 9,
-            name: "Rosca direta barra",
+            id: 6,
+            name: "Rosca direta",
             sets: "3x 8–10",
             description: "Cabeça curta e longa",
             muscleGroup: "biceps",
@@ -260,7 +232,7 @@
             ]
         },
         {
-            id: 10,
+            id: 7,
             name: "Rosca alternada inclinada",
             sets: "3x 10–12",
             description: "Ênfase cabeça longa",
@@ -268,9 +240,85 @@
             images: [
                 "imagens/treino-b/roscainclinada.gif"
             ]
+        },
+        // ANTEBRAÇO
+        {
+            id: 8,
+            name: "Rosca punho",
+            sets: "3x 15–20",
+            description: "Flexores do antebraço",
+            muscleGroup: "antebraco",
+            images: [
+                "imagens/treino-b/roscapunho1.gif",
+                "imagens/treino-b/roscapunho2.gif"
+            ]
+        },
+        {
+            id: 9,
+            name: "Rosca punho reversa",
+            sets: "3x 15–20",
+            description: "Extensores do antebraço",
+            muscleGroup: "antebraco",
+            images: [
+                "imagens/treino-b/roscapunho-reversa1.gif",
+                "imagens/treino-b/roscapunho-reversa2.gif"
+            ]
+        },
+        // POSTERIOR + GLÚTEO
+        {
+            id: 10,
+            name: "Levantamento terra romeno",
+            sets: "4x 6–8",
+            description: "Posterior + Glúteo",
+            muscleGroup: "posterior",
+            images: [
+                "imagens/treino-b/levantamentoterra.gif",
+                "imagens/treino-b/stiff.gif"
+            ]
+        },
+        {
+            id: 11,
+            name: "Mesa flexora",
+            sets: "3x 10–12",
+            description: "Posterior",
+            muscleGroup: "posterior",
+            images: [
+                "imagens/treino-b/mesaflexora.webp"
+            ]
+        },
+        {
+            id: 12,
+            name: "Afundo andando ou no lugar",
+            sets: "3x 10 cada perna",
+            description: "Quadríceps + Glúteo",
+            muscleGroup: "posterior",
+            images: [
+                "imagens/treino-b/afundo.gif"
+            ]
+        },
+        // PANTURRILHAS
+        {
+            id: 13,
+            name: "Panturrilha em pé",
+            sets: "4x 10–15",
+            description: "Panturrilha (gastrocnêmio)",
+            muscleGroup: "panturrilha",
+            images: [
+                "imagens/treino-b/panturrilha-pe.gif"
+            ]
+        },
+        {
+            id: 14,
+            name: "Panturrilha sentada",
+            sets: "3x 15–20",
+            description: "Panturrilha (sóleo)",
+            muscleGroup: "panturrilha",
+            images: [
+                "imagens/treino-b/panturrilha-sentada.gif"
+            ]
         }
     ];
-    
+
     // Inicializar treino B
     document.addEventListener('DOMContentLoaded', function() {
         if (typeof initWorkout === 'function') {
