@@ -81,12 +81,6 @@ class WorkoutManager {
         if (telegramBtn) {
             telegramBtn.addEventListener('click', () => this.sendToTelegram());
         }
-
-        // Botão WhatsApp
-        const whatsappBtn = document.getElementById('whatsapp-report-btn');
-        if (whatsappBtn) {
-            whatsappBtn.addEventListener('click', () => this.sendToWhatsApp());
-        }
     }
 
     // ===== SISTEMA DE TREINO =====
@@ -1255,58 +1249,44 @@ class WorkoutManager {
         }
     }
 
+    // ===== ENVIO AUTOMÁTICO PARA TELEGRAM =====
     sendToTelegram() {
         const textOutput = document.getElementById('report-text-output');
         if (!textOutput || !textOutput.value) return;
         
         const reportText = encodeURIComponent(textOutput.value);
-        const telegramChatId = '-1002074157691';
-        const telegramBotToken = 'SEU_BOT_TOKEN_AQUI';
         
-        if (telegramBotToken === 'SEU_BOT_TOKEN_AQUI') {
-            const telegramURL = `https://t.me/share/url?url=${encodeURIComponent('Relatório de Treino')}&text=${reportText}`;
-            window.open(telegramURL, '_blank');
-            this.showNotification('Abra o Telegram para enviar o relatório!', 'info');
-        } else {
-            const apiURL = `https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&text=${reportText}&parse_mode=Markdown`;
-            
-            fetch(apiURL)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.ok) {
-                        this.showNotification('Relatório enviado para o Telegram!', 'success');
-                    } else {
-                        this.showNotification('Erro ao enviar para o Telegram.', 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Erro:', error);
-                    this.showNotification('Erro de conexão com o Telegram.', 'error');
-                });
-        }
-    }
-
-    sendToWhatsApp() {
-        const textOutput = document.getElementById('report-text-output');
-        if (!textOutput || !textOutput.value) return;
+        // CONFIGURAÇÕES DO SEU BOT E GRUPO
+        const telegramChatId = '-1003838510525'; // ID do grupo "Evolução Treinos"
+        const telegramBotToken = '8161835192:AAFubpl3R2sgO5GfbnrRXrlNt5KNOtMn2nA'; // Token do seu bot
         
-        const reportText = encodeURIComponent(textOutput.value);
-        const phoneNumber = '31973112693';
-        const whatsappGroupLink = 'https://chat.whatsapp.com/SEU_LINK_DO_GRUPO';
+        // Mostrar status de envio
+        this.showNotification('Enviando relatório para o Telegram...', 'info');
         
-        if (whatsappGroupLink !== 'https://chat.whatsapp.com/SEU_LINK_DO_GRUPO') {
-            window.open(whatsappGroupLink, '_blank');
-            this.showNotification('Entre no grupo do WhatsApp para enviar o relatório!', 'info');
-            
-            setTimeout(() => {
-                const whatsappURL = `https://wa.me/?text=${reportText}`;
-                window.open(whatsappURL, '_blank');
-            }, 2000);
-        } else {
-            const whatsappURL = `https://wa.me/55${phoneNumber}?text=${reportText}`;
-            window.open(whatsappURL, '_blank');
-            this.showNotification('Abra o WhatsApp para enviar o relatório!', 'info');
-        }
+        // URL da API do Telegram
+        const apiURL = `https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&text=${reportText}&parse_mode=Markdown`;
+        
+        // Envio automático via fetch
+        fetch(apiURL)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.ok) {
+                    this.showNotification('✅ Relatório enviado automaticamente para o grupo do Telegram!', 'success');
+                    console.log('Telegram enviado com sucesso:', data);
+                } else {
+                    this.showNotification('❌ Erro ao enviar para o Telegram.', 'error');
+                    console.error('Telegram error:', data);
+                }
+            })
+            .catch(error => {
+                console.error('Erro de conexão:', error);
+                this.showNotification('❌ Erro de conexão com o Telegram.', 'error');
+            });
     }
 
     showNotification(message, type = 'info') {
