@@ -1,17 +1,11 @@
-// ACADEMIA ELIJUNIO - Main JavaScript
+// ACADEMIA ELIJUNIO - Main JavaScript (CORRIGIDO)
 
 class WorkoutManager {
     constructor() {
         this.currentWorkout = null;
         this.exercises = [];
         this.completedExercises = new Set();
-        this.exerciseData = {};
         this.isResting = false;
-        this.currentExerciseId = null;
-        this.attemptedGenerateWithoutCompletion = false;
-        this.workoutStartTime = null;
-        this.workoutDuration = 0;
-        this.timerAlertShown = false;
         
         this.init();
     }
@@ -19,27 +13,13 @@ class WorkoutManager {
     init() {
         this.bindEvents();
         this.updateStats();
-        this.setupTimerObserver();
-    }
-
-    setupTimerObserver() {
-        // Observar quando o timer é iniciado para habilitar checkboxes
-        if (window.timerManager) {
-            window.timerManager.addObserver((event) => {
-                if (event === 'timerStarted') {
-                    this.enableAllCheckboxes();
-                } else if (event === 'timerReset') {
-                    this.disableAllCheckboxes();
-                }
-            });
-        }
     }
 
     bindEvents() {
         // Botão finalizar treino
         const finishBtn = document.getElementById('finish-workout');
         if (finishBtn) {
-            finishBtn.addEventListener('click', () => this.generateReport());
+            finishBtn.addEventListener('click', () => this.finishWorkout());
         }
 
         // Botão pular descanso
@@ -47,80 +27,17 @@ class WorkoutManager {
         if (skipRestBtn) {
             skipRestBtn.addEventListener('click', () => this.skipRest());
         }
-
-        // Botão salvar peso
-        const saveWeightBtn = document.getElementById('save-weight-btn');
-        if (saveWeightBtn) {
-            saveWeightBtn.addEventListener('click', () => this.saveWeight());
-        }
-
-        // Botão cancelar peso
-        const cancelWeightBtn = document.querySelector('.btn-cancel-weight');
-        if (cancelWeightBtn) {
-            cancelWeightBtn.addEventListener('click', () => this.hideWeightModal());
-        }
-
-        // Botões de fechar modal
-        document.querySelectorAll('.close-weight-modal, .close-report-modal').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const modal = e.target.closest('.modal-overlay');
-                if (modal) modal.classList.remove('active');
-            });
-        });
-
-        // Botões de incremento/decremento de peso
-        const decreaseBtn = document.querySelector('.weight-btn.decrease');
-        const increaseBtn = document.querySelector('.weight-btn.increase');
-        if (decreaseBtn) {
-            decreaseBtn.addEventListener('click', () => this.adjustWeight(-2.5));
-        }
-        if (increaseBtn) {
-            increaseBtn.addEventListener('click', () => this.adjustWeight(2.5));
-        }
-
-        // Botões de peso pré-definido
-        document.querySelectorAll('.weight-preset').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const weight = parseFloat(e.target.dataset.weight);
-                this.setWeight(weight);
-                this.setActivePreset(e.target);
-            });
-        });
-
-        // Botão copiar relatório
-        const copyTextBtn = document.getElementById('copy-text-btn');
-        if (copyTextBtn) {
-            copyTextBtn.addEventListener('click', () => this.copyReportText());
-        }
-
-        // Botão Telegram
-        const telegramBtn = document.getElementById('telegram-report-btn');
-        if (telegramBtn) {
-            telegramBtn.addEventListener('click', () => this.sendToTelegram());
-        }
     }
 
+    // Inicializar treino específico
     initWorkout(type, exercises) {
         this.currentWorkout = type;
         this.exercises = exercises;
-        this.exerciseData = {};
-        this.completedExercises.clear();
-        this.attemptedGenerateWithoutCompletion = false;
-        this.workoutStartTime = null;
-        this.workoutDuration = 0;
-        this.timerAlertShown = false;
         this.renderExercises();
         this.updateStats();
-        this.loadSavedData();
-        
-        // Verificar estado inicial do timer
-        setTimeout(() => {
-            if (window.timerManager && !window.timerManager.hasStarted) {
-                this.disableAllCheckboxes();
-            }
-        }, 100);
     }
 
+    // Renderizar lista de exercícios (CORRIGIDO)
     renderExercises() {
         const container = document.getElementById('exercises-list');
         if (!container) return;
@@ -148,47 +65,14 @@ class WorkoutManager {
         });
     }
 
+    // Criar elemento de exercício (CORRIGIDO)
     createExerciseElement(exercise, number) {
         const isCompleted = this.completedExercises.has(exercise.id);
-        const exerciseData = this.exerciseData[exercise.id];
-        const hasWeightData = exerciseData && exerciseData.weight;
+        const hasMultipleImages = exercise.images && exercise.images.length > 1;
         
         const div = document.createElement('div');
         div.className = `exercise-card ${isCompleted ? 'completed' : ''}`;
         div.dataset.id = exercise.id;
-        
-        let weightInfoHtml = '';
-        if (hasWeightData) {
-            weightInfoHtml = `
-                <div class="exercise-weight-info">
-                    <div class="weight-info-header">
-                        <i class="fas fa-weight-hanging"></i>
-                        <h4>Desempenho Registrado</h4>
-                    </div>
-                    <div class="weight-info-content">
-                        <div class="weight-info-item">
-                            <i class="fas fa-dumbbell"></i>
-                            <span class="label">Peso:</span>
-                            <span class="value">${exerciseData.weight} kg</span>
-                        </div>
-                        ${exerciseData.variation ? `
-                        <div class="weight-info-item">
-                            <i class="fas fa-exchange-alt"></i>
-                            <span class="label">Variação:</span>
-                            <span class="value">${exerciseData.variation}</span>
-                        </div>
-                        ` : ''}
-                        ${exerciseData.notes ? `
-                        <div class="weight-info-item">
-                            <i class="fas fa-sticky-note"></i>
-                            <span class="label">Notas:</span>
-                            <span class="value">${exerciseData.notes}</span>
-                        </div>
-                        ` : ''}
-                    </div>
-                </div>
-            `;
-        }
         
         div.innerHTML = `
             <div class="exercise-header">
@@ -201,8 +85,6 @@ class WorkoutManager {
             </div>
 
             ${exercise.images && exercise.images.length > 0 ? this.createImageSlider(exercise.images) : ''}
-            
-            ${weightInfoHtml}
 
             <div class="exercise-complete">
                 <label class="complete-checkbox">
@@ -210,7 +92,7 @@ class WorkoutManager {
                     <div class="checkbox-custom">
                         <i class="fas fa-check"></i>
                     </div>
-                    <span class="checkbox-label">${hasWeightData ? 'Concluído ✓' : 'Concluído'}</span>
+                    <span class="checkbox-label">Concluído</span>
                 </label>
             </div>
         `;
@@ -218,383 +100,107 @@ class WorkoutManager {
         return div;
     }
 
-    createImageSlider(images) {
-        if (!images || images.length === 0) return '';
-        
-        const hasMultiple = images.length > 1;
-        const dotsHtml = hasMultiple ? 
-            images.map((_, i) => `<button class="slider-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></button>`).join('') : 
-            '';
-        
-        return `
-            <div class="exercise-images" ${hasMultiple ? `data-count="${images.length}"` : ''}>
-                <div class="image-slider" data-current="0">
-                    ${images.map((img, i) => 
-                        `<img src="${img}" class="slider-image ${i === 0 ? 'active' : ''}" 
-                              alt="Demonstração do exercício" 
-                              onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534367507877-0edd93bd013b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'"
-                              loading="lazy">`
-                    ).join('')}
-                    
-                    ${hasMultiple ? `
-                        <button class="slider-nav slider-prev">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <button class="slider-nav slider-next">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                        <div class="slider-dots">${dotsHtml}</div>
-                    ` : ''}
-                </div>
+    // Criar carrossel de imagens (CORRIGIDO)
+createImageSlider(images) {
+    if (!images || images.length === 0) return '';
+    
+    const hasMultiple = images.length > 1;
+    const dotsHtml = hasMultiple ? 
+        images.map((_, i) => `<button class="slider-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></button>`).join('') : 
+        '';
+    
+    // Fallback específico para cada tipo de erro
+    const fallbackImages = [
+        'https://images.unsplash.com/photo-1534367507877-0edd93bd013b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+        'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+        'https://images.unsplash.com/photo-1598974357801-cbca100e5d10?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    ];
+    
+    // Para exercícios com múltiplas imagens, podemos definir legendas
+    const getImageAlt = (index, total) => {
+        if (total === 1) return "Demonstração do exercício";
+        const variations = ["Cabo", "Máquina", "Halteres", "Barra"];
+        return variations[index] || `Opção ${index + 1}`;
+    };
+    
+    return `
+        <div class="exercise-images" ${hasMultiple ? `data-count="${images.length}"` : ''}>
+            <div class="image-slider" data-current="0">
+                ${images.map((img, i) => 
+                    `<img src="${img}" class="slider-image ${i === 0 ? 'active' : ''}" 
+                          alt="${getImageAlt(i, images.length)}" 
+                          onerror="this.onerror=null; this.src='${fallbackImages[i % fallbackImages.length]}'"
+                          loading="lazy">`
+                ).join('')}
+                
+                ${hasMultiple ? `
+                    <button class="slider-nav slider-prev">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="slider-nav slider-next">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="slider-dots">${dotsHtml}</div>
+                ` : ''}
             </div>
-        `;
-    }
+        </div>
+    `;
+}
 
+    // Marcar exercício como concluído (CORRIGIDO)
     handleExerciseComplete(event) {
         const checkbox = event.target;
         const exerciseId = parseInt(checkbox.dataset.id);
-        const exercise = this.exercises.find(e => e.id === exerciseId);
-
-        if (!exercise) return;
-
-        // VERIFICAR SE O TIMER FOI INICIADO
-        if (window.timerManager && !window.timerManager.hasStarted) {
-            this.showTimerAlert();
-            checkbox.checked = false;
-            
-            // Adicionar efeito visual de shake
-            const checkboxCustom = checkbox.nextElementSibling;
-            if (checkboxCustom) {
-                checkboxCustom.style.animation = 'shake 0.5s ease';
-                setTimeout(() => {
-                    checkboxCustom.style.animation = '';
-                }, 500);
-            }
-            
-            return;
-        }
+        const exerciseCard = checkbox.closest('.exercise-card');
 
         if (checkbox.checked) {
-            this.currentExerciseId = exerciseId;
-            this.showWeightModal(exercise);
+            this.completedExercises.add(exerciseId);
+            if (exerciseCard) {
+                exerciseCard.classList.add('completed');
+            }
+            
+            // Encontrar próximo exercício não concluído
+            const nextIndex = this.findNextUncompletedExercise();
+            
+            // Determinar tempo de descanso
+            if (nextIndex !== -1 && nextIndex < this.exercises.length) {
+                const currentExercise = this.exercises.find(e => e.id === exerciseId);
+                const nextExercise = this.exercises[nextIndex];
+                
+                let restTime = 45; // 45 segundos padrão
+                
+                if (currentExercise && nextExercise) {
+                    // Se grupos musculares diferentes, 90 segundos
+                    if (currentExercise.muscleGroup !== nextExercise.muscleGroup) {
+                        restTime = 90;
+                    }
+                    
+                    // Mostrar overlay de descanso
+                    this.showRestOverlay(restTime, nextExercise);
+                }
+            }
         } else {
             this.completedExercises.delete(exerciseId);
-            delete this.exerciseData[exerciseId];
-            
-            const exerciseCard = checkbox.closest('.exercise-card');
             if (exerciseCard) {
                 exerciseCard.classList.remove('completed');
-                const weightInfo = exerciseCard.querySelector('.exercise-weight-info');
-                if (weightInfo) weightInfo.remove();
-                const checkboxLabel = exerciseCard.querySelector('.checkbox-label');
-                if (checkboxLabel) checkboxLabel.textContent = 'Concluído';
             }
-            
-            this.updateProgress();
-            this.updateStats();
-            this.saveData();
         }
-    }
 
-    showTimerAlert() {
-        if (this.timerAlertShown) return;
-        
-        this.timerAlertShown = true;
-        
-        const alertHtml = `
-            <div class="timer-alert-overlay modal-overlay active">
-                <div class="timer-alert">
-                    <div class="timer-alert-header">
-                        <i class="fas fa-clock"></i>
-                        <h3>Timer Não Iniciado</h3>
-                    </div>
-                    <div class="timer-alert-content">
-                        <p><strong>Inicie o timer antes de marcar exercícios!</strong></p>
-                        <p>Você precisa clicar no botão "Iniciar" no timer principal para começar seu treino.</p>
-                    </div>
-                    <div class="timer-alert-actions">
-                        <button class="btn-understand-timer" id="understand-timer-btn">
-                            <i class="fas fa-check"></i> Entendi
-                        </button>
-                        <button class="btn-start-from-alert" id="start-timer-alert-btn">
-                            <i class="fas fa-play"></i> Iniciar Timer
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        document.body.insertAdjacentHTML('beforeend', alertHtml);
-
-        const modal = document.querySelector('.timer-alert-overlay');
-        const understandBtn = document.getElementById('understand-timer-btn');
-        const startBtn = document.getElementById('start-timer-alert-btn');
-
-        understandBtn.addEventListener('click', () => {
-            modal.remove();
-            this.timerAlertShown = false;
-        });
-
-        startBtn.addEventListener('click', () => {
-            if (window.timerManager) {
-                window.timerManager.start();
-            }
-            modal.remove();
-            this.timerAlertShown = false;
-        });
-
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.remove();
-                this.timerAlertShown = false;
-            }
-        });
-
-        // Auto-remover após 10 segundos
-        setTimeout(() => {
-            if (modal && document.body.contains(modal)) {
-                modal.remove();
-                this.timerAlertShown = false;
-            }
-        }, 10000);
-    }
-
-    disableAllCheckboxes() {
-        document.querySelectorAll('.checkbox-input').forEach(checkbox => {
-            checkbox.disabled = false; // Mantém habilitado, mas com verificação
-        });
-    }
-
-    enableAllCheckboxes() {
-        document.querySelectorAll('.checkbox-input').forEach(checkbox => {
-            checkbox.disabled = false;
-        });
-    }
-
-    showWeightModal(exercise) {
-        const modal = document.querySelector('.weight-modal-overlay');
-        const variationsContainer = document.getElementById('exercise-variations');
-        const weightInput = document.getElementById('weight-input');
-        const notesInput = document.getElementById('exercise-notes');
-        
-        if (!modal || !variationsContainer) return;
-        
-        const hasMultipleImages = exercise.images && exercise.images.length > 1;
-        
-        let variationsHtml = '';
-        if (hasMultipleImages) {
-            const variationNames = ['Cabo', 'Máquina', 'Halteres', 'Barra', 'Smith', 'Livre'];
-            variationsHtml = `
-                <div class="variation-title">Selecione a variação utilizada:</div>
-                <div class="variation-options">
-                    ${exercise.images.map((_, index) => {
-                        const variationName = variationNames[index] || `Opção ${index + 1}`;
-                        return `
-                            <div class="variation-option" data-index="${index}">
-                                <div class="variation-icon">
-                                    <i class="fas fa-dumbbell"></i>
-                                </div>
-                                <div class="variation-text">
-                                    <div class="variation-name">${variationName}</div>
-                                    <div class="variation-description">${exercise.name} - ${variationName.toLowerCase()}</div>
-                                </div>
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-            `;
-        } else {
-            variationsHtml = `
-                <div class="no-variations">
-                    <i class="fas fa-check-circle"></i>
-                    <p>Este exercício possui apenas uma variação</p>
-                </div>
-            `;
-        }
-        
-        variationsContainer.innerHTML = variationsHtml;
-        
-        if (hasMultipleImages) {
-            document.querySelectorAll('.variation-option').forEach(option => {
-                option.addEventListener('click', () => {
-                    document.querySelectorAll('.variation-option').forEach(o => o.classList.remove('selected'));
-                    option.classList.add('selected');
-                });
-            });
-            
-            const firstOption = variationsContainer.querySelector('.variation-option');
-            if (firstOption) firstOption.classList.add('selected');
-        }
-        
-        weightInput.value = '20';
-        notesInput.value = '';
-        
-        document.querySelectorAll('.weight-preset').forEach(p => p.classList.remove('active'));
-        
-        modal.classList.add('active');
-    }
-
-    hideWeightModal() {
-        const modal = document.querySelector('.weight-modal-overlay');
-        if (modal) modal.classList.remove('active');
-    }
-
-    adjustWeight(amount) {
-        const weightInput = document.getElementById('weight-input');
-        if (!weightInput) return;
-        
-        let currentWeight = parseFloat(weightInput.value) || 0;
-        let newWeight = currentWeight + amount;
-        
-        newWeight = Math.max(0, Math.min(300, newWeight));
-        
-        weightInput.value = newWeight.toFixed(1);
-        this.updateActivePreset(newWeight);
-    }
-
-    setWeight(weight) {
-        const weightInput = document.getElementById('weight-input');
-        if (!weightInput) return;
-        weightInput.value = weight;
-    }
-
-    setActivePreset(button) {
-        document.querySelectorAll('.weight-preset').forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-    }
-
-    updateActivePreset(weight) {
-        document.querySelectorAll('.weight-preset').forEach(btn => {
-            btn.classList.remove('active');
-            const btnWeight = parseFloat(btn.dataset.weight);
-            if (Math.abs(btnWeight - weight) < 0.1) {
-                btn.classList.add('active');
-            }
-        });
-    }
-
-    saveWeight() {
-        if (!this.currentExerciseId) return;
-        
-        const weightInput = document.getElementById('weight-input');
-        const notesInput = document.getElementById('exercise-notes');
-        const selectedVariation = document.querySelector('.variation-option.selected');
-        
-        if (!weightInput) return;
-        
-        const weight = parseFloat(weightInput.value);
-        if (isNaN(weight) || weight <= 0) {
-            this.showNotification('Por favor, insira um peso válido!', 'error');
-            return;
-        }
-        
-        const exercise = this.exercises.find(e => e.id === this.currentExerciseId);
-        if (!exercise) return;
-        
-        this.exerciseData[this.currentExerciseId] = {
-            weight: weight,
-            variation: selectedVariation ? selectedVariation.querySelector('.variation-name').textContent : null,
-            notes: notesInput.value.trim() || null,
-            date: new Date().toISOString(),
-            name: exercise.name,
-            sets: exercise.sets,
-            muscleGroup: exercise.muscleGroup
-        };
-        
-        this.completedExercises.add(this.currentExerciseId);
-        this.updateExerciseCard(this.currentExerciseId);
         this.updateProgress();
         this.updateStats();
-        this.saveData();
-        this.hideWeightModal();
-        
-        const nextIndex = this.findNextUncompletedExercise();
-        if (nextIndex !== -1 && nextIndex < this.exercises.length) {
-            const currentExercise = this.exercises.find(e => e.id === this.currentExerciseId);
-            const nextExercise = this.exercises[nextIndex];
-            
-            let restTime = 45;
-            if (currentExercise && nextExercise && currentExercise.muscleGroup !== nextExercise.muscleGroup) {
-                restTime = 90;
-            }
-            
-            this.showRestOverlay(restTime, nextExercise);
-        }
-        
-        const letsgoSound = document.getElementById('letsgo-sound');
-        if (letsgoSound) {
-            letsgoSound.currentTime = 0;
-            letsgoSound.play().catch(e => console.log("Áudio não pode ser reproduzido:", e));
-        }
     }
 
-    updateExerciseCard(exerciseId) {
-        const exercise = this.exercises.find(e => e.id === exerciseId);
-        if (!exercise) return;
-        
-        const exerciseCard = document.querySelector(`.exercise-card[data-id="${exerciseId}"]`);
-        if (!exerciseCard) return;
-        
-        const exerciseData = this.exerciseData[exerciseId];
-        const hasWeightData = exerciseData && exerciseData.weight;
-        
-        exerciseCard.classList.add('completed');
-        
-        const checkbox = exerciseCard.querySelector('.checkbox-input');
-        const checkboxLabel = exerciseCard.querySelector('.checkbox-label');
-        if (checkbox) checkbox.checked = true;
-        if (checkboxLabel) checkboxLabel.textContent = 'Concluído ✓';
-        
-        const existingWeightInfo = exerciseCard.querySelector('.exercise-weight-info');
-        if (existingWeightInfo) existingWeightInfo.remove();
-        
-        if (hasWeightData) {
-            const weightInfoHtml = `
-                <div class="exercise-weight-info">
-                    <div class="weight-info-header">
-                        <i class="fas fa-weight-hanging"></i>
-                        <h4>Desempenho Registrado</h4>
-                    </div>
-                    <div class="weight-info-content">
-                        <div class="weight-info-item">
-                            <i class="fas fa-dumbbell"></i>
-                            <span class="label">Peso:</span>
-                            <span class="value">${exerciseData.weight} kg</span>
-                        </div>
-                        ${exerciseData.variation ? `
-                        <div class="weight-info-item">
-                            <i class="fas fa-exchange-alt"></i>
-                            <span class="label">Variação:</span>
-                            <span class="value">${exerciseData.variation}</span>
-                        </div>
-                        ` : ''}
-                        ${exerciseData.notes ? `
-                        <div class="weight-info-item">
-                            <i class="fas fa-sticky-note"></i>
-                            <span class="label">Notas:</span>
-                            <span class="value">${exerciseData.notes}</span>
-                        </div>
-                        ` : ''}
-                    </div>
-                </div>
-            `;
-            
-            const exerciseComplete = exerciseCard.querySelector('.exercise-complete');
-            if (exerciseComplete) {
-                exerciseComplete.insertAdjacentHTML('beforebegin', weightInfoHtml);
-            }
-        }
-    }
-
+    // Encontrar próximo exercício não concluído
     findNextUncompletedExercise() {
         for (let i = 0; i < this.exercises.length; i++) {
             if (!this.completedExercises.has(this.exercises[i].id)) {
                 return i;
             }
         }
-        return -1;
+        return -1; // Todos concluídos
     }
 
+    // Mostrar overlay de descanso (CORRIGIDO)
     showRestOverlay(seconds, nextExercise) {
         this.isResting = true;
         
@@ -602,14 +208,13 @@ class WorkoutManager {
         const nextExerciseName = document.querySelector('.next-exercise-name');
         const muscleGroupElement = document.querySelector('.muscle-group');
         const restTypeElement = document.querySelector('.rest-type');
-        const minutesDisplay = document.getElementById('rest-minutes');
-        const secondsDisplay = document.getElementById('rest-seconds');
         
         if (nextExerciseName && nextExercise) {
             nextExerciseName.textContent = nextExercise.name;
         }
         
         if (muscleGroupElement && nextExercise) {
+            // Converter nome do grupo muscular para formato legível
             const groupNames = {
                 'peito': 'Peito',
                 'quadriceps': 'Quadríceps',
@@ -617,91 +222,89 @@ class WorkoutManager {
                 'triceps': 'Tríceps',
                 'costas': 'Costas',
                 'posterior': 'Posterior',
-                'biceps': 'Bíceps',
-                'antebraco': 'Antebraço',
-                'panturrilha': 'Panturrilha',
-                'adutor': 'Adutor',
-                'abdutor': 'Abdutor'
+                'biceps': 'Bíceps'
             };
             muscleGroupElement.textContent = groupNames[nextExercise.muscleGroup] || nextExercise.muscleGroup;
         }
         
         if (restTypeElement) {
-            restTypeElement.textContent = seconds >= 60 ? 
-                `${Math.floor(seconds / 60)} min ${seconds % 60} s` : 
-                `${seconds} segundos`;
-        }
-        
-        if (minutesDisplay && secondsDisplay) {
-            const minutes = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            minutesDisplay.textContent = minutes.toString().padStart(2, '0');
-            secondsDisplay.textContent = secs.toString().padStart(2, '0');
+            restTypeElement.textContent = seconds === 45 ? '45 segundos' : '1 minuto 30';
         }
         
         if (overlay) {
             overlay.classList.add('active');
         }
         
+        // Iniciar timer de descanso
         this.startRestTimer(seconds);
     }
 
-    startRestTimer(seconds) {
-        const minutesDisplay = document.getElementById('rest-minutes');
-        const secondsDisplay = document.getElementById('rest-seconds');
-        const progressCircle = document.querySelector('.progress-ring-circle');
+// Iniciar timer de descanso
+startRestTimer(seconds) {
+    const minutesDisplay = document.getElementById('rest-minutes');
+    const secondsDisplay = document.getElementById('rest-seconds');
+    const progressCircle = document.querySelector('.progress-ring-circle');
+    
+    if (!minutesDisplay || !secondsDisplay || !progressCircle) return;
+    
+    let timeLeft = seconds;
+    const totalTime = seconds;
+    
+    // CORREÇÃO: Cálculo correto para viewBox 0 0 100 100 com r=45
+    const radius = 45; // Mesmo raio do novo HTML: r="45"
+    const circumference = 2 * Math.PI * radius;
+    
+    // Configurar o stroke-dasharray
+    progressCircle.style.strokeDasharray = circumference;
+    progressCircle.style.strokeDashoffset = 0;
+    
+    const updateTimer = () => {
+        if (!this.isResting) return;
         
-        if (!minutesDisplay || !secondsDisplay || !progressCircle) return;
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
         
-        let timeLeft = seconds;
-        const totalTime = seconds;
+        minutesDisplay.textContent = minutes.toString().padStart(2, '0');
+        secondsDisplay.textContent = seconds.toString().padStart(2, '0');
         
-        const radius = 45;
-        const circumference = 2 * Math.PI * radius;
+        // CORREÇÃO: Cálculo correto do progresso
+        const progress = timeLeft / totalTime;
+        const offset = circumference * progress;
+        progressCircle.style.strokeDashoffset = circumference - offset;
         
-        progressCircle.style.strokeDasharray = circumference;
-        progressCircle.style.strokeDashoffset = 0;
+        if (timeLeft <= 0) {
+            this.endRestTimer();
+            return;
+        }
         
-        const updateTimer = () => {
-            if (!this.isResting) return;
-            
-            const minutes = Math.floor(timeLeft / 60);
-            const secs = timeLeft % 60;
-            
-            minutesDisplay.textContent = minutes.toString().padStart(2, '0');
-            secondsDisplay.textContent = secs.toString().padStart(2, '0');
-            
-            const progress = timeLeft / totalTime;
-            const offset = circumference * progress;
-            progressCircle.style.strokeDashoffset = circumference - offset;
-            
-            if (timeLeft <= 0) {
-                this.endRestTimer();
-                return;
-            }
-            
-            timeLeft--;
-            setTimeout(updateTimer, 1000);
-        };
-        
-        updateTimer();
-    }
-
+        timeLeft--;
+        setTimeout(updateTimer, 1000);
+    };
+    
+    updateTimer();
+}
+    // Finalizar timer de descanso
     endRestTimer() {
         this.isResting = false;
         
+        // Reproduzir som "Let's go!"
         const letsgoSound = document.getElementById('letsgo-sound');
         if (letsgoSound) {
             letsgoSound.currentTime = 0;
             letsgoSound.play().catch(e => console.log("Áudio não pode ser reproduzido:", e));
         }
         
+        // Fechar overlay
         const overlay = document.querySelector('.rest-overlay');
         if (overlay) {
             overlay.classList.remove('active');
         }
+        
+        // Atualizar interface
+        this.updateProgress();
     }
 
+    // Pular descanso
     skipRest() {
         this.isResting = false;
         
@@ -711,6 +314,7 @@ class WorkoutManager {
         }
     }
 
+    // Navegação do carrossel (CORRIGIDO)
     handleSliderNav(event) {
         const button = event.currentTarget;
         const slider = button.closest('.image-slider');
@@ -729,17 +333,21 @@ class WorkoutManager {
             nextIndex = (currentIndex - 1 + images.length) % images.length;
         }
         
+        // Atualizar imagem ativa
         images[currentIndex].classList.remove('active');
         images[nextIndex].classList.add('active');
         
+        // Atualizar dots
         if (dotButtons) {
             dotButtons[currentIndex]?.classList.remove('active');
             dotButtons[nextIndex]?.classList.add('active');
         }
         
+        // Atualizar índice atual
         slider.dataset.current = nextIndex;
     }
 
+    // Navegação por dots do carrossel (NOVO)
     handleSliderDot(event) {
         const dot = event.currentTarget;
         const index = parseInt(dot.dataset.index);
@@ -753,46 +361,56 @@ class WorkoutManager {
         
         const currentIndex = parseInt(slider.dataset.current || '0');
         
+        // Atualizar imagem ativa
         images[currentIndex].classList.remove('active');
         images[index].classList.add('active');
         
+        // Atualizar dots
         if (dotButtons) {
             dotButtons[currentIndex]?.classList.remove('active');
             dotButtons[index]?.classList.add('active');
         }
         
+        // Atualizar índice atual
         slider.dataset.current = index;
     }
 
+    // Atualizar progresso geral (CORRIGIDO)
     updateProgress() {
         const totalExercises = this.exercises.length;
         const completed = this.completedExercises.size;
         const progressPercent = totalExercises > 0 ? (completed / totalExercises) * 100 : 0;
         
+        // Atualizar barra de progresso
         const progressFill = document.getElementById('workout-progress-fill');
         if (progressFill) {
             progressFill.style.width = `${progressPercent}%`;
         }
         
+        // Atualizar porcentagem
         const progressPercentElement = document.querySelector('.progress-percent');
         if (progressPercentElement) {
             progressPercentElement.textContent = `${Math.round(progressPercent)}%`;
         }
     }
 
+    // Atualizar estatísticas (CORRIGIDO - removendo calorias estimadas)
     updateStats() {
         const totalExercises = this.exercises.length;
         const completed = this.completedExercises.size;
         
+        // Exercícios concluídos
         const completedElement = document.getElementById('completed-exercises');
         if (completedElement) {
             completedElement.textContent = completed;
         }
         
+        // Séries totais (CORRIGIDO)
         const totalSetsElement = document.getElementById('total-sets');
         if (totalSetsElement && this.exercises.length > 0) {
             let totalSets = 0;
             this.exercises.forEach(ex => {
+                // Extrair número de séries do formato "4x 6–8"
                 const setsMatch = ex.sets.match(/^(\d+)x/);
                 if (setsMatch) {
                     totalSets += parseInt(setsMatch[1]);
@@ -801,757 +419,101 @@ class WorkoutManager {
             totalSetsElement.textContent = totalSets;
         }
         
-        const totalWeightElement = document.getElementById('total-weight');
-        if (totalWeightElement) {
-            let totalWeight = 0;
-            let weightCount = 0;
-            
-            Object.values(this.exerciseData).forEach(data => {
-                if (data.weight) {
-                    totalWeight += data.weight;
-                    weightCount++;
-                }
-            });
-            
-            totalWeightElement.textContent = weightCount > 0 ? totalWeight.toFixed(1) : '0';
+        // Remover ou ocultar elemento de calorias estimadas
+        const caloriesElement = document.getElementById('estimated-calories');
+        const statCard = caloriesElement?.closest('.stat-card');
+        if (statCard) {
+            statCard.style.display = 'none'; // Oculta o card de calorias
         }
     }
 
-    calculateRealWorkoutTime() {
-        if (!window.timerManager || !window.timerManager.workoutStartTime) {
-            return 0;
-        }
-        
-        const elapsed = Math.floor((Date.now() - window.timerManager.workoutStartTime) / 1000);
-        return Math.min(elapsed, 90 * 60);
-    }
-
-    formatWorkoutTime(seconds) {
-        const hours = Math.floor(seconds / 3600);
-        const minutes = Math.floor((seconds % 3600) / 60);
-        const secs = seconds % 60;
-        
-        if (hours > 0) {
-            return `${hours}h ${minutes}m ${secs}s`;
-        } else if (minutes > 0) {
-            return `${minutes}m ${secs}s`;
-        } else {
-            return `${secs}s`;
-        }
-    }
-
-    generateReport() {
-        const completedCount = this.completedExercises.size;
-        const totalCount = this.exercises.length;
-        const allCompleted = completedCount === totalCount;
-
-        if (allCompleted) {
-            this.generateFullReport();
-        } else {
-            if (this.attemptedGenerateWithoutCompletion) {
-                this.showJustificationsModal();
-            } else {
-                this.showIncompleteAlert();
-                this.attemptedGenerateWithoutCompletion = true;
+    // Finalizar treino
+    finishWorkout() {
+        if (confirm('Tem certeza que deseja finalizar o treino? Todos os dados serão salvos.')) {
+            // Reproduzir som de finalização
+            const finishSound = document.getElementById('finish-sound');
+            if (finishSound) {
+                finishSound.currentTime = 0;
+                finishSound.play().catch(e => console.log("Áudio não pode ser reproduzido:", e));
             }
-        }
-    }
-
-    showIncompleteAlert() {
-        const uncompletedCount = this.exercises.length - this.completedExercises.size;
-        
-        const alertHtml = `
-            <div class="incomplete-alert-modal modal-overlay active">
-                <div class="incomplete-alert">
-                    <div class="alert-header">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <h3>Treino Incompleto</h3>
-                    </div>
-                    <div class="alert-content">
-                        <p>Você completou <strong>${this.completedExercises.size}</strong> de <strong>${this.exercises.length}</strong> exercícios.</p>
-                        <p><strong>${uncompletedCount} exercício(s) não foi(ram) marcado(s) como concluído(s).</strong></p>
-                        <div class="uncompleted-list">
-                            <h4>Exercícios pendentes:</h4>
-                            <ul>
-                                ${this.getUncompletedExercises().map(ex => 
-                                    `<li><i class="fas fa-times-circle"></i> ${ex.name} (${ex.sets})</li>`
-                                ).join('')}
-                            </ul>
-                        </div>
-                        <p class="alert-info">Clique novamente em "Gerar Relatório" se desejar justificar os exercícios não realizados.</p>
-                    </div>
-                    <div class="alert-actions">
-                        <button class="btn-cancel-alert">Voltar ao Treino</button>
-                        <button class="btn-justify-now">Justificar Agora</button>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        document.body.insertAdjacentHTML('beforeend', alertHtml);
-
-        const modal = document.querySelector('.incomplete-alert-modal');
-        const cancelBtn = modal.querySelector('.btn-cancel-alert');
-        const justifyBtn = modal.querySelector('.btn-justify-now');
-
-        cancelBtn.addEventListener('click', () => {
-            modal.remove();
-        });
-
-        justifyBtn.addEventListener('click', () => {
-            modal.remove();
-            this.showJustificationsModal();
-        });
-
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.remove();
-            }
-        });
-    }
-
-    showJustificationsModal() {
-        const uncompletedExercises = this.getUncompletedExercises();
-        
-        const justificationsHtml = `
-            <div class="justifications-modal modal-overlay active">
-                <div class="justifications-modal-content">
-                    <div class="modal-header">
-                        <h2><i class="fas fa-clipboard-check"></i> Justificar Exercícios Não Realizados</h2>
-                        <button class="close-justifications-modal"><i class="fas fa-times"></i></button>
-                    </div>
-                    <div class="modal-body">
-                        <p class="modal-subtitle">Por favor, explique por que não realizou os exercícios abaixo:</p>
-                        
-                        <div class="justifications-list">
-                            ${uncompletedExercises.map((exercise, index) => `
-                                <div class="justification-item" data-id="${exercise.id}">
-                                    <div class="justification-header">
-                                        <div class="exercise-info">
-                                            <h4>${exercise.name}</h4>
-                                            <span class="exercise-sets">${exercise.sets}</span>
-                                        </div>
-                                        <div class="justification-toggle">
-                                            <button class="toggle-justification-btn ${this.exerciseData[exercise.id]?.justification ? 'active' : ''}" 
-                                                    data-id="${exercise.id}">
-                                                <i class="fas fa-check"></i>
-                                                <span>${this.exerciseData[exercise.id]?.justification ? 'Justificado' : 'Justificar'}</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="justification-textarea ${this.exerciseData[exercise.id]?.justification ? 'active' : ''}">
-                                        <textarea id="justification-${exercise.id}" 
-                                                  placeholder="Ex: Estava cansado, lesão, falta de tempo, equipamento ocupado..."
-                                                  rows="3">${this.exerciseData[exercise.id]?.justification || ''}</textarea>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                        
-                        <div class="justification-options">
-                            <h4><i class="fas fa-lightbulb"></i> Sugestões de justificativas:</h4>
-                            <div class="options-grid">
-                                <button class="option-btn" data-text="Falta de tempo">Falta de tempo</button>
-                                <button class="option-btn" data-text="Equipamento ocupado">Equipamento ocupado</button>
-                                <button class="option-btn" data-text="Cansaço excessivo">Cansaço excessivo</button>
-                                <button class="option-btn" data-text="Lesão/Desconforto">Lesão/Desconforto</button>
-                                <button class="option-btn" data-text="Foco em outro grupo">Foco em outro grupo</button>
-                                <button class="option-btn" data-text="Outro motivo">Outro motivo</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn-cancel-justifications">Cancelar</button>
-                        <button class="btn-save-justifications" id="save-justifications-btn">
-                            <i class="fas fa-save"></i> Salvar Justificativas e Gerar Relatório
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        document.body.insertAdjacentHTML('beforeend', justificationsHtml);
-
-        const modal = document.querySelector('.justifications-modal');
-        const closeBtn = modal.querySelector('.close-justifications-modal');
-        
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => modal.remove());
-        }
-        
-        modal.querySelectorAll('.toggle-justification-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const exerciseId = parseInt(e.currentTarget.dataset.id);
-                const textarea = modal.querySelector(`#justification-${exerciseId}`);
-                const textareaContainer = textarea.closest('.justification-textarea');
-                
-                textareaContainer.classList.toggle('active');
-                e.currentTarget.classList.toggle('active');
-                
-                if (textareaContainer.classList.contains('active')) {
-                    textarea.focus();
-                }
-            });
-        });
-
-        modal.querySelectorAll('.option-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const text = e.currentTarget.dataset.text;
-                const activeTextarea = modal.querySelector('.justification-textarea.active textarea');
-                if (activeTextarea) {
-                    activeTextarea.value = text;
-                } else {
-                    this.showNotification('Selecione um exercício para justificar primeiro!', 'warning');
-                }
-            });
-        });
-
-        const cancelBtn = modal.querySelector('.btn-cancel-justifications');
-        cancelBtn.addEventListener('click', () => {
-            modal.remove();
-        });
-
-        const saveBtn = modal.querySelector('#save-justifications-btn');
-        saveBtn.addEventListener('click', () => this.saveJustifications());
-
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.remove();
-            }
-        });
-    }
-
-    saveJustifications() {
-        const modal = document.querySelector('.justifications-modal');
-        if (!modal) return;
-
-        const justificationItems = modal.querySelectorAll('.justification-item');
-        let hasJustification = false;
-
-        justificationItems.forEach(item => {
-            const exerciseId = parseInt(item.dataset.id);
-            const textarea = item.querySelector('textarea');
-            const isActive = item.querySelector('.justification-textarea').classList.contains('active');
             
-            if (isActive && textarea.value.trim()) {
-                if (!this.exerciseData[exerciseId]) {
-                    this.exerciseData[exerciseId] = {};
-                }
-                this.exerciseData[exerciseId].justification = textarea.value.trim();
-                this.exerciseData[exerciseId].justified = true;
-                hasJustification = true;
-            } else if (isActive && !textarea.value.trim()) {
-                this.showNotification('Preencha a justificativa para este exercício!', 'warning');
-                textarea.focus();
-                return false;
-            }
-        });
-
-        if (hasJustification) {
-            modal.remove();
-            this.generateFullReport(true);
-        }
-    }
-
-    getUncompletedExercises() {
-        return this.exercises.filter(ex => !this.completedExercises.has(ex.id));
-    }
-
-    generateFullReport(hasJustifications = false) {
-        this.showReportModal(hasJustifications);
-    }
-
-    showReportModal(hasJustifications = false) {
-        const modal = document.querySelector('.report-modal-overlay');
-        if (!modal) return;
-
-        this.fillReportData(hasJustifications);
-        this.generateReportText(hasJustifications);
-        modal.classList.add('active');
-    }
-
-    hideReportModal() {
-        const modal = document.querySelector('.report-modal-overlay');
-        if (modal) modal.classList.remove('active');
-    }
-
-    fillReportData(hasJustifications = false) {
-        const completedCount = this.completedExercises.size;
-        const totalCount = this.exercises.length;
-        const uncompletedCount = totalCount - completedCount;
-        
-        const workoutTime = this.calculateRealWorkoutTime();
-
-        const elements = {
-            workoutName: document.getElementById('report-workout-name'),
-            date: document.getElementById('report-date'),
-            totalExercises: document.getElementById('report-total-exercises'),
-            completedExercises: document.getElementById('report-completed-exercises'),
-            uncompletedExercises: document.getElementById('report-uncompleted-exercises'),
-            avgWeight: document.getElementById('report-avg-weight'),
-            exercisesList: document.getElementById('report-exercises-list'),
-            summaryDate: document.getElementById('summary-date'),
-            summaryWorkout: document.getElementById('summary-workout'),
-            summaryCompleted: document.getElementById('summary-completed'),
-            summaryWorkoutTime: document.getElementById('summary-workout-time'),
-            summaryTotalWeight: document.getElementById('summary-total-weight'),
-            summaryNotes: document.getElementById('summary-notes'),
-            justificationsSection: document.getElementById('justifications-section'),
-            justificationsList: document.getElementById('justifications-list')
-        };
-
-        if (elements.workoutName) {
-            elements.workoutName.textContent = this.currentWorkout === 'A' 
-                ? 'Treino A (Peito + Quadríceps + Tríceps)' 
-                : 'Treino B (Costas + Posterior + Bíceps)';
-        }
-
-        const now = new Date();
-        const dateStr = now.toLocaleDateString('pt-BR', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-
-        if (elements.date) elements.date.textContent = dateStr;
-        if (elements.summaryDate) elements.summaryDate.textContent = dateStr;
-
-        if (elements.totalExercises) elements.totalExercises.textContent = totalCount;
-        if (elements.completedExercises) elements.completedExercises.textContent = completedCount;
-        if (elements.uncompletedExercises) elements.uncompletedExercises.textContent = uncompletedCount;
-
-        let totalWeight = 0;
-        let weightCount = 0;
-        Object.values(this.exerciseData).forEach(data => {
-            if (data.weight) {
-                totalWeight += data.weight;
-                weightCount++;
-            }
-        });
-
-        const avg = weightCount > 0 ? (totalWeight / weightCount).toFixed(1) : '0';
-        if (elements.avgWeight) elements.avgWeight.textContent = avg;
-
-        if (elements.summaryWorkoutTime) {
-            elements.summaryWorkoutTime.textContent = this.formatWorkoutTime(workoutTime);
-        }
-
-        if (elements.exercisesList) {
-            elements.exercisesList.innerHTML = '';
+            // Salvar progresso no localStorage
+            this.saveProgress();
             
-            this.exercises.forEach(exercise => {
-                const exerciseData = this.exerciseData[exercise.id];
-                const isCompleted = this.completedExercises.has(exercise.id);
-                const hasWeight = exerciseData && exerciseData.weight;
-                const hasJustification = exerciseData && exerciseData.justification;
-
-                let statusClass = '';
-                let statusIcon = '';
-                let statusText = '';
-
-                if (isCompleted && hasWeight) {
-                    statusClass = 'completed';
-                    statusIcon = '<i class="fas fa-check-circle"></i>';
-                    statusText = 'Concluído';
-                } else if (hasJustification) {
-                    statusClass = 'justified';
-                    statusIcon = '<i class="fas fa-comment-alt"></i>';
-                    statusText = 'Justificado';
-                } else {
-                    statusClass = 'not-completed';
-                    statusIcon = '<i class="fas fa-times-circle"></i>';
-                    statusText = 'Não realizado';
-                }
-
-                const exerciseHtml = `
-                    <div class="report-exercise-item ${statusClass}">
-                        <div class="exercise-item-header">
-                            <div class="exercise-item-info">
-                                <div class="exercise-status">${statusIcon} ${statusText}</div>
-                                <div class="exercise-item-name">${exercise.name}</div>
-                            </div>
-                            ${hasWeight ? 
-                                `<div class="exercise-item-weight">${exerciseData.weight} kg</div>` : 
-                                `<div class="exercise-item-weight">-- kg</div>`
-                            }
-                        </div>
-                        
-                        <div class="exercise-item-details">
-                            <div class="exercise-item-detail">
-                                <i class="fas fa-layer-group"></i>
-                                <span class="label">Séries:</span>
-                                <span class="value">${exercise.sets}</span>
-                            </div>
-                            
-                            ${hasWeight && exerciseData.variation ? `
-                                <div class="exercise-item-detail">
-                                    <i class="fas fa-exchange-alt"></i>
-                                    <span class="label">Variação:</span>
-                                    <span class="value">${exerciseData.variation}</span>
-                                </div>
-                            ` : ''}
-                            
-                            ${hasWeight && exerciseData.notes ? `
-                                <div class="exercise-item-detail">
-                                    <i class="fas fa-sticky-note"></i>
-                                    <span class="label">Notas:</span>
-                                </div>
-                            ` : ''}
-                        </div>
-                        
-                        ${hasWeight && exerciseData.notes ? `
-                            <div class="exercise-notes">
-                                ${exerciseData.notes}
-                            </div>
-                        ` : ''}
-                        
-                        ${hasJustification ? `
-                            <div class="exercise-justification">
-                                <i class="fas fa-comment-dots"></i>
-                                <strong>Justificativa:</strong> ${exerciseData.justification}
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-                
-                elements.exercisesList.insertAdjacentHTML('beforeend', exerciseHtml);
-            });
-        }
-
-        if (elements.justificationsSection && elements.justificationsList) {
-            const justifiedExercises = this.exercises.filter(ex => 
-                this.exerciseData[ex.id] && this.exerciseData[ex.id].justification
-            );
-
-            if (justifiedExercises.length > 0) {
-                elements.justificationsSection.style.display = 'block';
-                elements.justificationsList.innerHTML = justifiedExercises.map(ex => {
-                    const data = this.exerciseData[ex.id];
-                    return `
-                        <div class="justification-summary-item">
-                            <div class="justification-exercise">
-                                <strong>${ex.name}</strong> (${ex.sets})
-                            </div>
-                            <div class="justification-text">
-                                ${data.justification}
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            } else {
-                elements.justificationsSection.style.display = 'none';
-            }
-        }
-
-        if (elements.summaryWorkout) {
-            elements.summaryWorkout.textContent = this.currentWorkout === 'A' ? 'Treino A' : 'Treino B';
-        }
-
-        if (elements.summaryCompleted) {
-            elements.summaryCompleted.textContent = `${completedCount}/${totalCount}`;
-        }
-
-        if (elements.summaryTotalWeight) {
-            elements.summaryTotalWeight.textContent = `${totalWeight.toFixed(1)} kg`;
-        }
-
-        const allNotes = Object.values(this.exerciseData)
-            .filter(data => data.notes)
-            .map(data => data.notes)
-            .join(' | ');
-
-        if (elements.summaryNotes) {
-            elements.summaryNotes.textContent = allNotes || 'Nenhuma observação registrada';
-        }
-    }
-
-    generateReportText(hasJustifications = false) {
-        const textOutput = document.getElementById('report-text-output');
-        if (!textOutput) return;
-
-        const now = new Date();
-        const dateStr = now.toLocaleDateString('pt-BR', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric'
-        });
-
-        const timeStr = now.toLocaleTimeString('pt-BR', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
-        });
-
-        const workoutName = this.currentWorkout === 'A' 
-            ? 'TREINO A - Peito + Quadríceps + Tríceps' 
-            : 'TREINO B - Costas + Posterior + Bíceps';
-
-        const completedCount = this.completedExercises.size;
-        const totalCount = this.exercises.length;
-        const completionRate = Math.round((completedCount / totalCount) * 100);
-        
-        const workoutTime = this.calculateRealWorkoutTime();
-        const formattedWorkoutTime = this.formatWorkoutTime(workoutTime);
-
-        let reportText = `🏋️‍♂️ *RELATÓRIO DE TREINO - ACADEMIA ELIJUNIO* 🏋️‍♂️\n\n`;
-        reportText += `📅 Data: ${dateStr}\n`;
-        reportText += `⏰ Horário: ${timeStr}\n`;
-        reportText += `💪 Treino: ${workoutName}\n`;
-        reportText += `⏱️ Tempo de treino: ${formattedWorkoutTime}\n`;
-        reportText += `✅ Progresso: ${completedCount}/${totalCount} exercícios (${completionRate}%)\n\n`;
-
-        const completedWithWeight = this.exercises.filter(ex => 
-            this.completedExercises.has(ex.id) && this.exerciseData[ex.id]?.weight
-        );
-
-        if (completedWithWeight.length > 0) {
-            reportText += `📊 *EXERCÍCIOS COMPLETOS:*\n\n`;
+            // Redirecionar para página inicial após 2 segundos
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000);
             
-            completedWithWeight.forEach(exercise => {
-                const data = this.exerciseData[exercise.id];
-                reportText += `✅ *${exercise.name}*\n`;
-                reportText += `   🔸 Peso: ${data.weight} kg\n`;
-                reportText += `   🔸 Séries: ${exercise.sets}\n`;
-                if (data.variation) {
-                    reportText += `   🔸 Variação: ${data.variation}\n`;
-                }
-                if (data.notes) {
-                    reportText += `   🔸 Observações: ${data.notes}\n`;
-                }
-                reportText += `\n`;
-            });
-        }
-
-        const justifiedExercises = this.exercises.filter(ex => 
-            this.exerciseData[ex.id]?.justification
-        );
-
-        if (justifiedExercises.length > 0) {
-            reportText += `📝 *EXERCÍCIOS JUSTIFICADOS:*\n\n`;
-            
-            justifiedExercises.forEach(exercise => {
-                const data = this.exerciseData[exercise.id];
-                reportText += `💬 *${exercise.name}*\n`;
-                reportText += `   🔸 Status: Não realizado\n`;
-                reportText += `   🔸 Justificativa: ${data.justification}\n`;
-                reportText += `   🔸 Séries planejadas: ${exercise.sets}\n\n`;
-            });
-        }
-
-        const uncompletedWithoutJustification = this.exercises.filter(ex => 
-            !this.completedExercises.has(ex.id) && !this.exerciseData[ex.id]?.justification
-        );
-
-        if (uncompletedWithoutJustification.length > 0) {
-            reportText += `⚠️ *EXERCÍCIOS NÃO REALIZADOS:*\n\n`;
-            
-            uncompletedWithoutJustification.forEach(exercise => {
-                reportText += `❌ ${exercise.name} (${exercise.sets})\n`;
-            });
-            reportText += `\n`;
-        }
-
-        let totalWeight = 0;
-        Object.values(this.exerciseData).forEach(data => {
-            if (data.weight) totalWeight += data.weight;
-        });
-
-        reportText += `📈 *RESUMO GERAL:*\n`;
-        reportText += `   ✅ Exercícios completos: ${completedCount}\n`;
-        reportText += `   💬 Exercícios justificados: ${justifiedExercises.length}\n`;
-        reportText += `   ❌ Exercícios não realizados: ${uncompletedWithoutJustification.length}\n`;
-        reportText += `   🏋️ Peso total levantado: ${totalWeight.toFixed(1)} kg\n`;
-        reportText += `   ⚖️ Peso médio (exercícios com peso): ${completedWithWeight.length > 0 ? (totalWeight / completedWithWeight.length).toFixed(1) : '0'} kg\n`;
-        reportText += `   ⏱️ Tempo de treino: ${formattedWorkoutTime}\n\n`;
-
-        if (completionRate === 100) {
-            reportText += `🎉 *TREINO COMPLETO!* Parabéns pela dedicação!\n\n`;
-        } else if (justifiedExercises.length > 0) {
-            reportText += `👏 *TREINO PARCIALMENTE CONCLUÍDO* - Bom trabalho nas justificativas!\n\n`;
-        } else {
-            reportText += `💪 *CONTINUE ASSIM!* Cada treino conta!\n\n`;
-        }
-
-        reportText += `🔥 *Foco • Disciplina • Resultados* 🔥\n`;
-        reportText += `#AcademiaElijunio #${this.currentWorkout === 'A' ? 'TreinoA' : 'TreinoB'}`;
-
-        textOutput.value = reportText;
-    }
-
-    copyReportText() {
-        const textOutput = document.getElementById('report-text-output');
-        if (!textOutput) return;
-        
-        textOutput.select();
-        textOutput.setSelectionRange(0, 99999);
-        
-        try {
-            const successful = document.execCommand('copy');
-            if (successful) {
-                this.showNotification('Relatório copiado para a área de transferência!', 'success');
-                
-                const copyBtn = document.getElementById('copy-text-btn');
-                if (copyBtn) {
-                    const originalText = copyBtn.innerHTML;
-                    copyBtn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
-                    copyBtn.style.background = 'var(--accent-green)';
-                    
-                    setTimeout(() => {
-                        copyBtn.innerHTML = originalText;
-                        copyBtn.style.background = '';
-                    }, 2000);
-                }
-            }
-        } catch (err) {
-            console.error('Erro ao copiar:', err);
-            this.showNotification('Erro ao copiar o relatório.', 'error');
+            // Mostrar mensagem de sucesso
+            alert('Treino finalizado com sucesso! Redirecionando...');
         }
     }
 
-    sendToTelegram() {
-        const textOutput = document.getElementById('report-text-output');
-        if (!textOutput || !textOutput.value) return;
-        
-        const reportText = encodeURIComponent(textOutput.value);
-        
-        const telegramChatId = '-1003838510525';
-        const telegramBotToken = '8161835192:AAFubpl3R2sgO5GfbnrRXrlNt5KNOtMn2nA';
-        
-        this.showNotification('Enviando relatório para o Telegram...', 'info');
-        
-        const apiURL = `https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&text=${reportText}&parse_mode=Markdown`;
-        
-        fetch(apiURL)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.ok) {
-                    this.showNotification('✅ Relatório enviado para o Telegram!', 'success');
-                    console.log('Telegram enviado com sucesso:', data);
-                    this.resetWorkoutAfterReport();
-                } else {
-                    this.showNotification('❌ Erro ao enviar para o Telegram.', 'error');
-                    console.error('Telegram error:', data);
-                }
-            })
-            .catch(error => {
-                console.error('Erro de conexão:', error);
-                this.showNotification('❌ Erro de conexão com o Telegram.', 'error');
-            });
-    }
-
-    resetWorkoutAfterReport() {
-        this.completedExercises.clear();
-        this.exerciseData = {};
-        this.attemptedGenerateWithoutCompletion = false;
-        
-        this.updateProgress();
-        this.updateStats();
-        
-        document.querySelectorAll('.checkbox-input').forEach(checkbox => {
-            checkbox.checked = false;
-        });
-        
-        document.querySelectorAll('.exercise-card').forEach(card => {
-            card.classList.remove('completed');
-        });
-        
-        document.querySelectorAll('.exercise-weight-info').forEach(info => {
-            info.remove();
-        });
-        
-        document.querySelectorAll('.checkbox-label').forEach(label => {
-            label.textContent = 'Concluído';
-        });
-        
-        if (window.timerManager) {
-            window.timerManager.reset();
-        }
-        
-        this.hideReportModal();
-        
-        localStorage.removeItem(`academia_elijunio_${this.currentWorkout}`);
-        
-        this.showNotification('Treino resetado com sucesso! Pronto para novo treino.', 'success');
-    }
-
-    showNotification(message, type = 'info') {
-        const existingNotification = document.querySelector('.notification');
-        if (existingNotification) existingNotification.remove();
-        
-        const notification = document.createElement('div');
-        notification.className = `notification notification-${type}`;
-        notification.innerHTML = `
-            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
-            <span>${message}</span>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() => notification.remove(), 300);
-        }, 5000);
-    }
-
-    saveData() {
-        const data = {
+    // Salvar progresso
+    saveProgress() {
+        const progress = {
             workout: this.currentWorkout,
             completedExercises: Array.from(this.completedExercises),
-            exerciseData: this.exerciseData,
             timestamp: new Date().toISOString()
         };
         
-        localStorage.setItem(`academia_elijunio_${this.currentWorkout}`, JSON.stringify(data));
+        localStorage.setItem('academia_elijunio_progress', JSON.stringify(progress));
     }
 
-    loadSavedData() {
-        const saved = localStorage.getItem(`academia_elijunio_${this.currentWorkout}`);
+    // Carregar progresso
+    loadProgress() {
+        const saved = localStorage.getItem('academia_elijunio_progress');
         if (saved) {
             try {
-                const data = JSON.parse(saved);
-                
-                if (data.workout === this.currentWorkout) {
-                    if (data.completedExercises) {
-                        data.completedExercises.forEach(id => {
-                            this.completedExercises.add(id);
-                        });
-                    }
+                const progress = JSON.parse(saved);
+                if (progress.workout === this.currentWorkout && progress.completedExercises) {
+                    progress.completedExercises.forEach(id => {
+                        this.completedExercises.add(id);
+                    });
                     
-                    if (data.exerciseData) {
-                        this.exerciseData = data.exerciseData;
-                    }
+                    // Atualizar checkboxes
+                    document.querySelectorAll('.checkbox-input').forEach(checkbox => {
+                        const exerciseId = parseInt(checkbox.dataset.id);
+                        if (this.completedExercises.has(exerciseId)) {
+                            checkbox.checked = true;
+                            const card = checkbox.closest('.exercise-card');
+                            if (card) {
+                                card.classList.add('completed');
+                            }
+                        }
+                    });
                     
-                    this.updateExerciseCardsFromData();
                     this.updateProgress();
                     this.updateStats();
                 }
             } catch (e) {
-                console.error('Erro ao carregar dados:', e);
+                console.error('Erro ao carregar progresso:', e);
             }
         }
-    }
-
-    updateExerciseCardsFromData() {
-        Object.keys(this.exerciseData).forEach(exerciseId => {
-            this.updateExerciseCard(parseInt(exerciseId));
-        });
     }
 }
 
 // Inicializar quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', () => {
     window.workoutManager = new WorkoutManager();
+    
+    // Verificar se há progresso salvo
+    setTimeout(() => {
+        if (window.workoutManager) {
+            window.workoutManager.loadProgress();
+        }
+    }, 100);
 });
 
-// Animações de entrada
+// Função global para inicializar treino específico
+function initWorkout(type, exercises) {
+    if (window.workoutManager) {
+        window.workoutManager.initWorkout(type, exercises);
+    }
+}
+
+// Animações de entrada suaves
 document.addEventListener('DOMContentLoaded', () => {
     const animateOnScroll = () => {
         const elements = document.querySelectorAll('.workout-card, .exercise-card, .stat-card');
@@ -1567,12 +529,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
     
+    // Aplicar estilos iniciais para animação
     document.querySelectorAll('.workout-card, .exercise-card, .stat-card').forEach(el => {
         el.style.opacity = "0";
         el.style.transform = "translateY(20px)";
         el.style.transition = "opacity 0.5s ease, transform 0.5s ease";
     });
     
+    // Disparar animação na carga inicial
     setTimeout(animateOnScroll, 100);
+    
+    // Disparar animação no scroll
     window.addEventListener('scroll', animateOnScroll);
 });

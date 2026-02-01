@@ -6,13 +6,14 @@
     <title>Treino B</title>
     <link rel="icon" href="assets/icons/treinoB.ico" type="image/x-icon">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="workout-page workout-b-page">
-    <!-- Overlay de Descanso (INICIALMENTE ESCONDIDO) -->
+    <!-- Overlay de Descanso -->
     <div class="rest-overlay">
         <div class="rest-modal">
             <div class="rest-header">
@@ -21,19 +22,19 @@
             </div>
             
             <div class="rest-timer">
-                <div class="timer-circle">
-                    <svg class="progress-ring" viewBox="0 0 100 100">
-                        <circle class="progress-ring-circle" 
-                                stroke-width="8" 
-                                fill="transparent" 
-                                r="45" 
-                                cx="50" 
-                                cy="50"/>
-                    </svg>
-                    <div class="timer-display">
-                        <span id="rest-minutes">00</span>:<span id="rest-seconds">45</span>
-                    </div>
+            <div class="timer-circle">
+                <svg class="progress-ring" viewBox="0 0 100 100">
+                    <circle class="progress-ring-circle" 
+                            stroke-width="8" 
+                            fill="transparent" 
+                            r="45" 
+                            cx="50" 
+                            cy="50"/>
+                </svg>
+                <div class="timer-display">
+                    <span id="rest-minutes">00</span>:<span id="rest-seconds">45</span>
                 </div>
+            </div>
                 <p class="rest-instruction">Mantenha a respiração controlada</p>
             </div>
 
@@ -53,128 +54,6 @@
             <button class="btn-skip-rest" id="skip-rest">
                 <i class="fas fa-forward"></i> Pular Descanso
             </button>
-        </div>
-    </div>
-
-    <!-- Modal de Registro de Pesos -->
-    <div class="weight-modal-overlay">
-        <div class="weight-modal">
-            <div class="weight-modal-header">
-                <h2><i class="fas fa-weight-hanging"></i> Registrar Desempenho</h2>
-                <button class="close-weight-modal"><i class="fas fa-times"></i></button>
-            </div>
-            
-            <div class="exercise-variations" id="exercise-variations">
-                <!-- As opções serão preenchidas dinamicamente -->
-            </div>
-            
-            <div class="weight-input-section">
-                <h3><i class="fas fa-dumbbell"></i> Peso Utilizado (kg)</h3>
-                <div class="weight-input-container">
-                    <button class="weight-btn decrease">-</button>
-                    <input type="number" id="weight-input" min="0" max="300" step="0.5" value="20">
-                    <button class="weight-btn increase">+</button>
-                    <span class="weight-unit">kg</span>
-                </div>
-                <div class="weight-presets">
-                    <button class="weight-preset" data-weight="10">10kg</button>
-                    <button class="weight-preset" data-weight="20">20kg</button>
-                    <button class="weight-preset" data-weight="30">30kg</button>
-                    <button class="weight-preset" data-weight="40">40kg</button>
-                    <button class="weight-preset" data-weight="50">50kg</button>
-                </div>
-            </div>
-            
-            <div class="additional-notes">
-                <h3><i class="fas fa-sticky-note"></i> Observações (opcional)</h3>
-                <textarea id="exercise-notes" placeholder="Ex: Fiz 8 repetições na primeira série, 6 na segunda..."></textarea>
-            </div>
-            
-            <div class="weight-modal-actions">
-                <button class="btn-cancel-weight">Cancelar</button>
-                <button class="btn-save-weight" id="save-weight-btn">
-                    <i class="fas fa-save"></i> Salvar Desempenho
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de Relatório -->
-    <div class="report-modal-overlay">
-        <div class="report-modal">
-            <div class="report-modal-header">
-                <h2><i class="fas fa-chart-line"></i> Relatório de Treino</h2>
-                <button class="close-report-modal"><i class="fas fa-times"></i></button>
-            </div>
-            
-            <div class="report-content">
-                <div class="report-header">
-                    <div class="report-title">
-                        <h3 id="report-workout-name">Treino B</h3>
-                        <p id="report-date"></p>
-                    </div>
-                    <div class="report-stats">
-                        <div class="stat">
-                            <i class="fas fa-dumbbell"></i>
-                            <span id="report-total-exercises">0</span>
-                            <small>exercícios</small>
-                        </div>
-                        <div class="stat">
-                            <i class="fas fa-weight-hanging"></i>
-                            <span id="report-completed-exercises">0</span>
-                            <small>concluídos</small>
-                        </div>
-                        <div class="stat">
-                            <i class="fas fa-times-circle"></i>
-                            <span id="report-uncompleted-exercises">0</span>
-                            <small>pendentes</small>
-                        </div>
-                        <div class="stat">
-                            <i class="fas fa-weight-hanging"></i>
-                            <span id="report-avg-weight">0</span>
-                            <small>kg média</small>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="report-exercises" id="report-exercises-list">
-                    <!-- Lista de exercícios será preenchida aqui -->
-                </div>
-                
-                <!-- Seção de Justificativas -->
-                <div class="report-section" id="justifications-section" style="display: none;">
-                    <h4><i class="fas fa-comment-dots"></i> Justificativas dos Exercícios Não Realizados</h4>
-                    <div class="justifications-container" id="justifications-list">
-                        <!-- Justificativas serão preenchidas aqui -->
-                    </div>
-                </div>
-                
-                <div class="report-summary">
-                    <h4><i class="fas fa-star"></i> Resumo do Treino</h4>
-                    <div class="summary-content">
-                        <p><strong>Data:</strong> <span id="summary-date"></span></p>
-                        <p><strong>Treino:</strong> <span id="summary-workout"></span></p>
-                        <p><strong>Exercícios completos:</strong> <span id="summary-completed"></span></p>
-                        <p><strong>Tempo de treino:</strong> <span id="summary-workout-time"></span></p>
-                        <p><strong>Peso total levantado:</strong> <span id="summary-total-weight"></span> kg</p>
-                        <p><strong>Observações:</strong> <span id="summary-notes"></span></p>
-                    </div>
-                </div>
-                
-                <div class="report-textarea">
-                    <h4><i class="fas fa-copy"></i> Relatório para Copiar</h4>
-                    <textarea id="report-text-output" readonly rows="8"></textarea>
-                    <button class="btn-copy-text" id="copy-text-btn">
-                        <i class="fas fa-copy"></i> Copiar Texto
-                    </button>
-                </div>
-                
-                <div class="report-actions">
-                    <button class="btn-telegram-report" id="telegram-report-btn">
-                        <i class="fab fa-telegram"></i> Enviar para Telegram
-                    </button>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -255,11 +134,6 @@
                     <h3 id="total-sets">47</h3>
                     <p>Séries Totais</p>
                 </div>
-                <div class="stat-card">
-                    <i class="fas fa-weight-hanging"></i>
-                    <h3 id="total-weight">0</h3>
-                    <p>Kg Registrados</p>
-                </div>
             </div>
         </main>
 
@@ -267,10 +141,10 @@
         <footer class="workout-footer">
             <div class="footer-note">
                 <i class="fas fa-info-circle"></i>
-                <p>Marque cada exercício como concluído para registrar os pesos utilizados</p>
+                <p>Marque cada exercício como concluído para ativar o timer de descanso inteligente</p>
             </div>
             <button class="btn-finish-workout" id="finish-workout">
-                <i class="fas fa-chart-line"></i> Gerar Relatório
+                <i class="fas fa-flag-checkered"></i> Finalizar Treino
             </button>
         </footer>
     </div>
@@ -286,131 +160,171 @@
         <source src="assets/audio/tempodetreino.mp3" type="audio/mpeg">
     </audio>
 
-    <script src="js/main.js"></script>
+    <script src="js/exercises.js"></script>
     <script src="js/timer.js"></script>
-    <script>
-        // Treino B - Dados dos exercícios
-        const workoutBExercises = [
-            {
-                id: 1,
-                name: "Barra fixa ou puxada frente",
-                sets: "4x 6–8",
-                description: "Grande dorsal (largura)",
-                muscleGroup: "costas",
-                images: ["imagens/treino-b/barrafixa.gif", "imagens/treino-b/puxadafrente.gif"]
-            },
-            {
-                id: 2,
-                name: "Remada curvada barra",
-                sets: "3x 8–10",
-                description: "Espessura",
-                muscleGroup: "costas",
-                images: ["imagens/treino-b/remadacurvada.webp"]
-            },
-            {
-                id: 3,
-                name: "Remada baixa",
-                sets: "3x 10–12",
-                description: "Costas médias",
-                muscleGroup: "costas",
-                images: ["imagens/treino-b/remadabaixa.gif"]
-            },
-            {
-                id: 4,
-                name: "Elevação posterior",
-                sets: "3x 12–15",
-                description: "Ombro posterior",
-                muscleGroup: "ombro",
-                images: ["imagens/treino-b/elevacaoposterior.gif", "imagens/treino-b/maquinaposterior.gif"]
-            },
-            {
-                id: 5,
-                name: "Encolhimento barra",
-                sets: "4x 10–12",
-                description: "Trapézio superior",
-                muscleGroup: "ombro",
-                images: ["imagens/treino-b/encolhimento.gif"]
-            },
-            {
-                id: 6,
-                name: "Rosca direta",
-                sets: "3x 8–10",
-                description: "Cabeça curta e longa",
-                muscleGroup: "biceps",
-                images: ["imagens/treino-b/roscadireta.gif"]
-            },
-            {
-                id: 7,
-                name: "Rosca alternada inclinada",
-                sets: "3x 10–12",
-                description: "Ênfase cabeça longa",
-                muscleGroup: "biceps",
-                images: ["imagens/treino-b/roscainclinada.gif"]
-            },
-            {
-                id: 8,
-                name: "Rosca punho",
-                sets: "3x 15–20",
-                description: "Flexores do antebraço",
-                muscleGroup: "antebraco",
-                images: ["imagens/treino-b/roscapunho1.gif", "imagens/treino-b/roscapunho2.gif"]
-            },
-            {
-                id: 9,
-                name: "Rosca punho reversa",
-                sets: "3x 15–20",
-                description: "Extensores do antebraço",
-                muscleGroup: "antebraco",
-                images: ["imagens/treino-b/roscapunho-reversa1.gif", "imagens/treino-b/roscapunho-reversa2.gif"]
-            },
-            {
-                id: 10,
-                name: "Levantamento terra romeno",
-                sets: "4x 6–8",
-                description: "Posterior + Glúteo",
-                muscleGroup: "posterior",
-                images: ["imagens/treino-b/levantamentoterra.gif", "imagens/treino-b/stiff.gif"]
-            },
-            {
-                id: 11,
-                name: "Mesa flexora",
-                sets: "3x 10–12",
-                description: "Posterior",
-                muscleGroup: "posterior",
-                images: ["imagens/treino-b/mesaflexora.webp"]
-            },
-            {
-                id: 12,
-                name: "Afundo andando ou no lugar",
-                sets: "3x 10 cada perna",
-                description: "Quadríceps + Glúteo",
-                muscleGroup: "posterior",
-                images: ["imagens/treino-b/afundo.gif"]
-            },
-            {
-                id: 13,
-                name: "Panturrilha em pé",
-                sets: "4x 10–15",
-                description: "Panturrilha (gastrocnêmio)",
-                muscleGroup: "panturrilha",
-                images: ["imagens/treino-b/panturrilha-pe.gif"]
-            },
-            {
-                id: 14,
-                name: "Panturrilha sentada",
-                sets: "3x 15–20",
-                description: "Panturrilha (sóleo)",
-                muscleGroup: "panturrilha",
-                images: ["imagens/treino-b/panturrilha-sentada.gif"]
-            }
-        ];
+    <script src="js/main.js"></script>
+<script>
+    // Treino B - Dados dos exercícios com IMAGENS LOCAIS E CARROSSEL
+    const workoutBExercises = [
+        // COSTAS (LARGURA + ESPESSURA)
+        {
+            id: 1,
+            name: "Barra fixa ou puxada frente",
+            sets: "4x 6–8",
+            description: "Grande dorsal (largura)",
+            muscleGroup: "costas",
+            images: [
+                "imagens/treino-b/barrafixa.gif",
+                "imagens/treino-b/puxadafrente.gif"
+            ]
+        },
+        {
+            id: 2,
+            name: "Remada curvada barra",
+            sets: "3x 8–10",
+            description: "Espessura",
+            muscleGroup: "costas",
+            images: [
+                "imagens/treino-b/remadacurvada.webp"
+            ]
+        },
+        {
+            id: 3,
+            name: "Remada baixa",
+            sets: "3x 10–12",
+            description: "Costas médias",
+            muscleGroup: "costas",
+            images: [
+                "imagens/treino-b/remadabaixa.gif"
+            ]
+        },
+        // OMBRO POSTERIOR + TRAPÉZIO
+        {
+            id: 4,
+            name: "Elevação posterior",
+            sets: "3x 12–15",
+            description: "Ombro posterior",
+            muscleGroup: "ombro",
+            images: [
+                "imagens/treino-b/elevacaoposterior.gif",
+                "imagens/treino-b/maquinaposterior.gif"
+            ]
+        },
+        {
+            id: 5,
+            name: "Encolhimento barra",
+            sets: "4x 10–12",
+            description: "Trapézio superior",
+            muscleGroup: "ombro",
+            images: [
+                "imagens/treino-b/encolhimento.gif"
+            ]
+        },
+        // BÍCEPS
+        {
+            id: 6,
+            name: "Rosca direta",
+            sets: "3x 8–10",
+            description: "Cabeça curta e longa",
+            muscleGroup: "biceps",
+            images: [
+                "imagens/treino-b/roscadireta.gif"
+            ]
+        },
+        {
+            id: 7,
+            name: "Rosca alternada inclinada",
+            sets: "3x 10–12",
+            description: "Ênfase cabeça longa",
+            muscleGroup: "biceps",
+            images: [
+                "imagens/treino-b/roscainclinada.gif"
+            ]
+        },
+        // ANTEBRAÇO
+        {
+            id: 8,
+            name: "Rosca punho",
+            sets: "3x 15–20",
+            description: "Flexores do antebraço",
+            muscleGroup: "antebraco",
+            images: [
+                "imagens/treino-b/roscapunho1.gif",
+                "imagens/treino-b/roscapunho2.gif"
+            ]
+        },
+        {
+            id: 9,
+            name: "Rosca punho reversa",
+            sets: "3x 15–20",
+            description: "Extensores do antebraço",
+            muscleGroup: "antebraco",
+            images: [
+                "imagens/treino-b/roscapunho-reversa1.gif",
+                "imagens/treino-b/roscapunho-reversa2.gif"
+            ]
+        },
+        // POSTERIOR + GLÚTEO
+        {
+            id: 10,
+            name: "Levantamento terra romeno",
+            sets: "4x 6–8",
+            description: "Posterior + Glúteo",
+            muscleGroup: "posterior",
+            images: [
+                "imagens/treino-b/levantamentoterra.gif",
+                "imagens/treino-b/stiff.gif"
+            ]
+        },
+        {
+            id: 11,
+            name: "Mesa flexora",
+            sets: "3x 10–12",
+            description: "Posterior",
+            muscleGroup: "posterior",
+            images: [
+                "imagens/treino-b/mesaflexora.webp"
+            ]
+        },
+        {
+            id: 12,
+            name: "Afundo andando ou no lugar",
+            sets: "3x 10 cada perna",
+            description: "Quadríceps + Glúteo",
+            muscleGroup: "posterior",
+            images: [
+                "imagens/treino-b/afundo.gif"
+            ]
+        },
+        // PANTURRILHAS
+        {
+            id: 13,
+            name: "Panturrilha em pé",
+            sets: "4x 10–15",
+            description: "Panturrilha (gastrocnêmio)",
+            muscleGroup: "panturrilha",
+            images: [
+                "imagens/treino-b/panturrilha-pe.gif"
+            ]
+        },
+        {
+            id: 14,
+            name: "Panturrilha sentada",
+            sets: "3x 15–20",
+            description: "Panturrilha (sóleo)",
+            muscleGroup: "panturrilha",
+            images: [
+                "imagens/treino-b/panturrilha-sentada.gif"
+            ]
+        }
+    ];
 
-        // Inicializar treino B
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.workoutManager) {
-                window.workoutManager.initWorkout('B', workoutBExercises);
-            }
-        });
-    </script>
+    // Inicializar treino B
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof initWorkout === 'function') {
+            initWorkout('B', workoutBExercises);
+        }
+    });
+</script>
 </body>
 </html>

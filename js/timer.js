@@ -1,4 +1,4 @@
-// ACADEMIA ELIJUNIO - Timer Manager
+// ACADEMIA ELIJUNIO - Timer Manager (COM WHATSAPP)
 
 class TimerManager {
     constructor() {
@@ -8,11 +8,11 @@ class TimerManager {
         this.isRunning = false;
         this.startTime = null;
         this.pausedTime = null;
-        this.hasStarted = false;
-        this.workoutStartTime = null;
-        this.observers = [];
+        this.hasStarted = false; // Nova variável para controlar se já começou
         
+        // Obter referência da música do treino
         this.workoutMusic = document.getElementById('workout-music');
+        // Obter elementos dos botões
         this.startBtn = document.getElementById('start-timer');
         this.pauseBtn = document.getElementById('pause-timer');
         
@@ -22,7 +22,7 @@ class TimerManager {
     init() {
         this.bindEvents();
         this.updateDisplay();
-        this.updateButtonStatesAndText();
+        this.updateButtonStatesAndText(); // Atualizar botões
     }
 
     bindEvents() {
@@ -40,52 +40,26 @@ class TimerManager {
         }
     }
 
-    // Métodos para observer pattern
-    addObserver(callback) {
-        this.observers.push(callback);
-    }
-
-    removeObserver(callback) {
-        this.observers = this.observers.filter(obs => obs !== callback);
-    }
-
-    notifyObservers(event) {
-        this.observers.forEach(callback => {
-            try {
-                callback(event);
-            } catch (e) {
-                console.error('Erro no observer:', e);
-            }
-        });
-    }
-
     start() {
         if (this.isRunning) return;
 
         this.isRunning = true;
-        this.hasStarted = true;
+        this.startTime = Date.now() - (this.totalTime - this.timeLeft) * 1000;
         
-        // Notificar que o timer começou
-        this.notifyObservers('timerStarted');
-        
-        if (!this.workoutStartTime) {
-            this.workoutStartTime = Date.now();
+        // Tocar música do treino APENAS na primeira vez
+        if (!this.hasStarted) {
+            this.playWorkoutMusicOnce();
+            this.hasStarted = true;
+            
+            // ENVIAR MENSAGEM PARA WHATSAPP APENAS NA PRIMEIRA VEZ
+            this.sendWhatsAppMessage();
         }
         
-        if (this.pausedTime !== null) {
-            // Continuar de onde parou
-            this.startTime = Date.now() - (this.totalTime - this.pausedTime) * 1000;
-        } else {
-            // Começar do início
-            this.startTime = Date.now() - (this.totalTime - this.timeLeft) * 1000;
-        }
-        
-        this.playWorkoutMusicOnce();
-        this.sendWhatsAppMessage();
-        
+        // Atualizar interface
         this.updateButtonStatesAndText();
         this.updateTimerStatus('Treino em andamento', 'running');
 
+        // Iniciar contagem regressiva
         this.timerInterval = setInterval(() => {
             this.timeLeft = Math.max(0, this.totalTime - Math.floor((Date.now() - this.startTime) / 1000));
             this.updateDisplay();
@@ -99,18 +73,20 @@ class TimerManager {
     // ENVIAR MENSAGEM PARA WHATSAPP
     sendWhatsAppMessage() {
         try {
+            // Número fornecido por você
             const phoneNumber = "31997077639";
+            
+            // Mensagem exata que você pediu
             const message = "Boraaa, hora do show porra uhuuuuu, biirlllll!";
+            
+            // URL do WhatsApp (formato: 55 (Brasil) + DDD + número)
             const whatsappURL = `https://wa.me/55${phoneNumber}?text=${encodeURIComponent(message)}`;
             
-            // Abrir em nova aba sem focar
-            const newWindow = window.open(whatsappURL, '_blank', 'noopener,noreferrer,width=600,height=700');
-            if (newWindow) {
-                // Focar na janela principal novamente
-                setTimeout(() => window.focus(), 100);
-            }
+            // Abrir WhatsApp em nova janela
+            window.open(whatsappURL, '_blank', 'noopener,noreferrer');
             
             console.log("✅ Mensagem WhatsApp enviada para: 55" + phoneNumber);
+            
         } catch (error) {
             console.error("❌ Erro ao enviar mensagem WhatsApp:", error);
         }
@@ -123,33 +99,28 @@ class TimerManager {
         clearInterval(this.timerInterval);
         this.pausedTime = this.timeLeft;
         
-        // Notificar que o timer pausou
-        this.notifyObservers('timerPaused');
-        
-        this.stopWorkoutMusic();
-        
+        // Atualizar interface
         this.updateButtonStatesAndText();
         this.updateTimerStatus('Treino pausado', 'paused');
     }
 
     reset() {
         this.isRunning = false;
-        this.hasStarted = false;
+        this.hasStarted = false; // Resetar flag
         clearInterval(this.timerInterval);
         this.timeLeft = this.totalTime;
         this.startTime = null;
         this.pausedTime = null;
-        this.workoutStartTime = null;
         
-        // Notificar que o timer resetou
-        this.notifyObservers('timerReset');
-        
+        // Parar e resetar música do treino
         this.stopWorkoutMusic();
         
+        // Atualizar interface
         this.updateDisplay();
         this.updateButtonStatesAndText();
         this.updateTimerStatus('Pronto para começar', 'idle');
         
+        // Parar qualquer som de finalização
         const finishSound = document.getElementById('finish-sound');
         if (finishSound) {
             finishSound.pause();
@@ -157,19 +128,23 @@ class TimerManager {
         }
     }
 
+    // Função para tocar música do treino UMA VEZ
     playWorkoutMusicOnce() {
         if (this.workoutMusic) {
+            // Verificar se o áudio está carregado
             if (this.workoutMusic.readyState >= 2) {
                 this.workoutMusic.currentTime = 0;
-                this.workoutMusic.volume = 0.3;
                 this.workoutMusic.play().catch(e => {
                     console.log("Erro ao tocar música do treino:", e);
+                    // Tentar com volume baixo para evitar restrições do navegador
+                    this.workoutMusic.volume = 0.1;
+                    this.workoutMusic.play().catch(e2 => console.log("Segunda tentativa falhou:", e2));
                 });
             } else {
                 console.log("Música do treino ainda não carregada");
+                // Tentar carregar novamente
                 this.workoutMusic.load();
                 this.workoutMusic.addEventListener('canplaythrough', () => {
-                    this.workoutMusic.volume = 0.3;
                     this.workoutMusic.play().catch(e => console.log("Erro após carregar música:", e));
                 }, { once: true });
             }
@@ -183,35 +158,45 @@ class TimerManager {
         }
     }
 
+    // Atualizar estados e texto dos botões
     updateButtonStatesAndText() {
+        // Lógica para o botão Iniciar/Continuar
         if (this.startBtn) {
             if (this.isRunning) {
+                // Quando está rodando, esconder o botão
                 this.startBtn.style.display = 'none';
                 this.startBtn.disabled = true;
                 this.startBtn.style.opacity = '0.5';
                 this.startBtn.style.cursor = 'not-allowed';
             } else {
+                // Quando não está rodando
                 this.startBtn.style.display = 'flex';
                 this.startBtn.disabled = false;
                 this.startBtn.style.opacity = '1';
                 this.startBtn.style.cursor = 'pointer';
                 
+                // Definir texto apropriado
                 if (this.hasStarted && this.timeLeft < this.totalTime) {
+                    // Já começou antes e está pausado
                     this.startBtn.innerHTML = '<i class="fas fa-play"></i> Continuar';
                 } else {
+                    // Nunca começou ou foi resetado
                     this.startBtn.innerHTML = '<i class="fas fa-play"></i> Iniciar';
                 }
             }
         }
 
+        // Lógica para o botão Pausar
         if (this.pauseBtn) {
             if (this.isRunning) {
+                // Quando está rodando, mostrar botão Pausar
                 this.pauseBtn.style.display = 'flex';
                 this.pauseBtn.disabled = false;
                 this.pauseBtn.style.opacity = '1';
                 this.pauseBtn.style.cursor = 'pointer';
                 this.pauseBtn.innerHTML = '<i class="fas fa-pause"></i> Pausar';
             } else {
+                // Quando não está rodando, esconder botão Pausar
                 this.pauseBtn.style.display = 'none';
                 this.pauseBtn.disabled = true;
                 this.pauseBtn.style.opacity = '0.5';
@@ -229,22 +214,15 @@ class TimerManager {
         
         timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         
-        // Mudar cor conforme tempo
+        // Mudar cor quando estiver nos últimos 5 minutos
         if (this.timeLeft <= 5 * 60) {
             timerElement.style.background = 'linear-gradient(90deg, #ff2e2e, #ff6b6b)';
             timerElement.style.webkitBackgroundClip = 'text';
             timerElement.style.webkitTextFillColor = 'transparent';
-            timerElement.classList.add('pulse');
-        } else if (this.timeLeft <= 15 * 60) {
-            timerElement.style.background = 'linear-gradient(90deg, #ff9f43, #ff6b6b)';
-            timerElement.style.webkitBackgroundClip = 'text';
-            timerElement.style.webkitTextFillColor = 'transparent';
-            timerElement.classList.remove('pulse');
         } else {
-            timerElement.style.background = 'linear-gradient(90deg, var(--accent-red), var(--accent-blue))';
+            timerElement.style.background = 'linear-gradient(90deg, #ff2e2e, #2e5bff)';
             timerElement.style.webkitBackgroundClip = 'text';
             timerElement.style.webkitTextFillColor = 'transparent';
-            timerElement.classList.remove('pulse');
         }
     }
 
@@ -276,23 +254,26 @@ class TimerManager {
 
     handleTimeUp() {
         this.isRunning = false;
-        this.hasStarted = false;
+        this.hasStarted = false; // Resetar para permitir iniciar novamente
         clearInterval(this.timerInterval);
         
+        // Atualizar interface
         this.updateButtonStatesAndText();
         this.updateTimerStatus('Treino finalizado!', 'finished');
         
+        // Reproduzir som de finalização
         const finishSound = document.getElementById('finish-sound');
         if (finishSound) {
             finishSound.currentTime = 0;
             finishSound.play().catch(e => console.log("Áudio não pode ser reproduzido:", e));
         }
         
-        this.stopWorkoutMusic();
+        // Mostrar notificação
         this.showTimeUpNotification();
     }
 
     showTimeUpNotification() {
+        // Criar notificação
         const notification = document.createElement('div');
         notification.className = 'time-up-notification';
         notification.innerHTML = `
@@ -304,40 +285,36 @@ class TimerManager {
         
         document.body.appendChild(notification);
         
+        // Remover após 5 segundos
         setTimeout(() => {
             notification.remove();
         }, 5000);
     }
 
+    // Formatar tempo para leitura humana
     formatTime(seconds) {
         const hours = Math.floor(seconds / 3600);
         const minutes = Math.floor((seconds % 3600) / 60);
         const secs = seconds % 60;
         
         if (hours > 0) {
-            return `${hours}h ${minutes.toString().padStart(2, '0')}m ${secs.toString().padStart(2, '0')}s`;
-        } else if (minutes > 0) {
-            return `${minutes}m ${secs.toString().padStart(2, '0')}s`;
+            return `${hours}h ${minutes}m ${secs}s`;
         } else {
-            return `${secs}s`;
+            return `${minutes}m ${secs}s`;
         }
     }
 
+    // Obter tempo decorrido
     getElapsedTime() {
-        if (!this.workoutStartTime) return 0;
-        
-        const now = this.isRunning ? Date.now() : (this.pausedTime ? 
-            Date.now() - (this.totalTime - this.pausedTime) * 1000 : 
-            Date.now());
-            
-        const elapsed = Math.floor((now - this.workoutStartTime) / 1000);
-        return Math.min(elapsed, 90 * 60);
+        return this.totalTime - this.timeLeft;
     }
 
+    // Obter tempo restante formatado
     getTimeLeftFormatted() {
         return this.formatTime(this.timeLeft);
     }
 
+    // Obter porcentagem concluída
     getProgressPercentage() {
         return ((this.totalTime - this.timeLeft) / this.totalTime) * 100;
     }
@@ -348,23 +325,15 @@ document.addEventListener('DOMContentLoaded', () => {
     window.timerManager = new TimerManager();
 });
 
-// Adicionar estilo para animação de pulso
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-    
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-        20%, 40%, 60%, 80% { transform: translateX(5px); }
-    }
-    
-    .timer-digits.pulse {
-        animation: pulse 1s infinite;
-    }
-`;
-document.head.appendChild(style);
+// Expor funções do timer globalmente
+function startTimer() {
+    if (window.timerManager) window.timerManager.start();
+}
+
+function pauseTimer() {
+    if (window.timerManager) window.timerManager.pause();
+}
+
+function resetTimer() {
+    if (window.timerManager) window.timerManager.reset();
+}

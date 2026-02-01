@@ -1,5 +1,11 @@
-/* Responsividade Mobile First */
+/* Responsividade Mobile First - SIMPLIFICADO */
 
+/* Forçar modo escuro sempre */
+:root {
+    color-scheme: dark;
+}
+
+/* Dispositivos muito pequenos (até 480px) */
 @media (max-width: 480px) {
     :root {
         --spacing-md: 1rem;
@@ -11,160 +17,86 @@
     h2 { font-size: 1.6rem; }
     h3 { font-size: 1.3rem; }
 
-    .container { 
-        padding: 0.5rem;
-    }
+    .container { padding: var(--spacing-sm); }
     
     .main-header { 
-        padding: var(--spacing-md);
-        margin: 0.5rem;
+        padding: var(--spacing-lg); 
         border-radius: 16px;
+        margin: var(--spacing-sm);
     }
     
-    .logo-container { 
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .logo-icon { 
-        font-size: 2.5rem;
-        margin-bottom: 0.5rem;
-    }
+    .logo-container { flex-direction: column; }
+    .logo-icon { font-size: 2.5rem; }
     
     .workout-cards-container { 
         grid-template-columns: 1fr;
-        padding: 0 0.5rem;
-        gap: var(--spacing-md);
+        padding: 0 var(--spacing-sm);
     }
     
     .workout-card { 
-        height: 300px;
+        height: 320px;
         margin: 0 auto;
-        max-width: 100%;
+        max-width: 400px;
     }
     
-    .card-badge {
-        width: 50px;
-        height: 50px;
-        font-size: 1.5rem;
-        top: 1rem;
-        right: 1rem;
+    /* REMOVER CARD-BADGE EM MOBILE */
+    .workout-card .card-badge {
+        display: none !important;
     }
-    
+
     .workout-header { 
-        flex-direction: column;
+        flex-direction: column; 
         text-align: center;
+        margin: var(--spacing-sm);
         padding: var(--spacing-md);
-        margin: 0.5rem;
-        gap: var(--spacing-md);
     }
     
-    .workout-title { 
-        flex-direction: column;
-        gap: var(--spacing-sm);
-    }
-    
-    .workout-badge {
-        width: 60px;
-        height: 60px;
-        font-size: 2rem;
-    }
-    
+    .workout-title { justify-content: center; }
     .workout-progress { 
         min-width: 100%;
         margin-top: var(--spacing-md);
     }
     
-    .timer-digits { 
-        font-size: 3rem;
-        margin-bottom: 0.5rem;
-    }
-    
-    .timer-controls { 
-        flex-direction: column;
-        align-items: center;
-        gap: 0.75rem;
-    }
-    
+    .timer-digits { font-size: 3rem; }
+    .timer-controls { flex-direction: column; }
     .timer-btn { 
-        width: 100%;
+        width: 100%; 
         max-width: 280px;
         padding: 14px 20px;
-        font-size: 1rem;
     }
     
-    .exercises-container {
-        padding: var(--spacing-md);
-        margin: 0.5rem;
-    }
-    
-    .exercise-card {
-        padding: var(--spacing-md);
-    }
-    
-    .exercise-header { 
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--spacing-md);
-    }
-    
-    .exercise-name {
-        font-size: 1.4rem;
-    }
-    
-    .exercise-sets {
-        font-size: 0.9rem;
-        padding: 8px 16px;
-    }
-    
+    .exercise-header { flex-direction: column; }
     .exercise-images { 
         height: 200px !important;
         margin: var(--spacing-md) 0;
     }
     
     .workout-stats { 
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
         gap: var(--spacing-md);
-        padding: 0;
-        margin-top: var(--spacing-lg);
+        padding: 0 var(--spacing-sm);
     }
     
     .stat-card:nth-child(3) { 
         display: none !important; 
     }
     
-    .stat-card {
-        padding: var(--spacing-md);
-    }
-    
-    .stat-card h3 {
-        font-size: 2.5rem;
-    }
-    
     .workout-footer { 
-        flex-direction: column;
+        flex-direction: column; 
         text-align: center;
+        margin: var(--spacing-sm);
         padding: var(--spacing-md);
-        margin: 0.5rem;
-        gap: var(--spacing-md);
     }
     
     .footer-note { 
         justify-content: center;
         text-align: center;
-        padding: var(--spacing-sm);
     }
     
-    /* Modais mobile */
-    .rest-modal,
-    .weight-modal,
-    .report-modal,
-    .justifications-modal-content,
-    .incomplete-alert { 
-        padding: var(--spacing-md);
+    .rest-modal { 
+        padding: var(--spacing-md); 
         width: 95%;
-        margin: 0.5rem;
-        max-height: 85vh;
+        margin: var(--spacing-sm);
     }
     
     .timer-circle { 
@@ -178,11 +110,6 @@
     
     .rest-info { 
         grid-template-columns: 1fr; 
-        gap: var(--spacing-sm);
-    }
-    
-    .info-card {
-        padding: var(--spacing-sm);
     }
     
     .slider-nav { 
@@ -191,43 +118,15 @@
         font-size: 1rem;
     }
     
-    .weight-input-container {
-        gap: var(--spacing-sm);
-        padding: var(--spacing-sm);
+    .exercise-name {
+        font-size: 1.4rem;
     }
     
-    .weight-btn {
-        width: 40px;
-        height: 40px;
-        font-size: 1.2rem;
-    }
-    
-    #weight-input {
-        width: 80px;
-        height: 50px;
-        font-size: 1.5rem;
-    }
-    
-    .weight-presets {
-        gap: 0.5rem;
-    }
-    
-    .weight-preset {
-        padding: 6px 12px;
+    .exercise-sets {
+        padding: 8px 16px;
         font-size: 0.9rem;
     }
     
-    .report-actions {
-        flex-direction: column;
-        gap: var(--spacing-sm);
-    }
-    
-    #report-text-output {
-        height: 150px;
-        font-size: 0.85rem;
-    }
-    
-    /* Garantir que nada ultrapasse a tela */
     body {
         overflow-x: hidden;
         max-width: 100vw;
@@ -240,32 +139,26 @@
     .main-header,
     .hero-section,
     .workout-tips,
-    .main-footer,
-    .workout-container,
-    .exercises-container,
-    .workout-footer {
+    .main-footer {
         max-width: 100vw;
         overflow-x: hidden;
     }
     
-    /* Quebra de palavras longas */
     .logo-container h1,
     .subtitle,
     .hero-section h2,
-    .hero-description,
-    .exercise-name,
-    .checkbox-label {
+    .hero-description {
         word-break: break-word;
         hyphens: auto;
     }
 }
 
+/* Tablets (481px - 768px) */
 @media (min-width: 481px) and (max-width: 768px) {
     .workout-cards-container { 
         grid-template-columns: 1fr;
         max-width: 500px;
         margin: 0 auto;
-        gap: var(--spacing-lg);
     }
     
     .workout-card { 
@@ -284,36 +177,18 @@
         margin-top: var(--spacing-md);
     }
     
-    .timer-digits { 
-        font-size: 4rem;
-    }
+    .timer-digits { font-size: 3.5rem; }
     
-    .timer-controls {
-        gap: 1rem;
-    }
-    
-    .timer-btn {
-        min-width: 180px;
-    }
-    
-    .exercise-header { 
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
+    .exercise-header { flex-direction: column; }
     .exercise-images { 
-        height: 240px !important;
+        height: 220px !important;
+        margin: var(--spacing-lg) 0;
     }
     
     .workout-stats { 
         grid-template-columns: repeat(2, 1fr);
         max-width: 600px;
         margin: var(--spacing-xl) auto 0;
-        gap: var(--spacing-md);
-    }
-    
-    .stat-card:nth-child(3) { 
-        display: block !important; 
     }
     
     .exercises-container {
@@ -323,46 +198,28 @@
     .exercise-card {
         padding: var(--spacing-lg);
     }
-    
-    /* Modais tablets */
-    .weight-modal,
-    .report-modal {
-        max-width: 90%;
-        padding: var(--spacing-lg);
-    }
-    
-    .report-actions {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    
-    .report-actions button {
-        min-width: calc(50% - var(--spacing-md));
-    }
 }
 
+/* Tablets grandes e laptops pequenos (769px - 1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
     .workout-cards-container { 
         grid-template-columns: repeat(2, 1fr);
         gap: var(--spacing-lg);
-        max-width: 900px;
-        margin: 0 auto;
-    }
-    
-    .workout-card { 
-        height: 380px;
+        padding: 0 var(--spacing-md);
     }
     
     .timer-digits { 
-        font-size: 4.5rem;
+        font-size: 4rem;
+        letter-spacing: 1px;
     }
     
     .exercise-images { 
-        height: 260px !important;
+        height: 240px !important;
+        margin: var(--spacing-lg) 0;
     }
     
     .workout-stats { 
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         max-width: 800px;
         margin: var(--spacing-xl) auto 0;
     }
@@ -370,17 +227,9 @@
     .exercise-name {
         font-size: 1.6rem;
     }
-    
-    /* Modais grandes tablets */
-    .weight-modal {
-        max-width: 600px;
-    }
-    
-    .report-modal {
-        max-width: 700px;
-    }
 }
 
+/* Desktops (1025px - 1200px) */
 @media (min-width: 1025px) and (max-width: 1200px) {
     .container { 
         max-width: 1100px;
@@ -393,13 +242,13 @@
     }
     
     .exercise-images { 
-        height: 280px !important;
+        height: 260px !important;
+        margin: var(--spacing-xl) 0;
     }
     
     .workout-cards-container {
         gap: var(--spacing-xl);
-        margin: var(--spacing-xl) auto;
-        max-width: 1000px;
+        margin: var(--spacing-xl) 0;
     }
     
     .workout-card {
@@ -407,25 +256,41 @@
     }
 }
 
+/* Desktops grandes (acima de 1200px) */
 @media (min-width: 1201px) {
     .container { 
-        max-width: 1200px;
-        margin: 0 auto;
+        max-width: 1400px;
+        padding: var(--spacing-xl);
     }
     
     .workout-container { 
         max-width: 1200px;
-        margin: 0 auto;
         padding: var(--spacing-xl);
     }
     
     .exercise-images { 
-        height: 300px !important;
+        height: 280px !important;
+        margin: var(--spacing-xl) 0;
     }
     
     .workout-cards-container {
-        max-width: 1100px;
-        margin: var(--spacing-xl) auto;
+        gap: var(--spacing-xl);
+        margin: var(--spacing-xl) 0;
+    }
+}
+
+/* Telas muito grandes */
+@media (min-width: 1400px) {
+    .exercise-images { 
+        height: 300px !important;
+    }
+    
+    .workout-card {
+        height: 450px;
+    }
+    
+    .timer-digits {
+        font-size: 5.5rem;
     }
 }
 
@@ -433,72 +298,46 @@
 @media (max-height: 600px) and (orientation: landscape) {
     .workout-card { 
         height: 280px;
+        max-width: 400px;
     }
     
     .exercise-images { 
         height: 180px !important;
-    }
-    
-    /* Modais em paisagem */
-    .weight-modal,
-    .report-modal {
-        max-height: 85vh;
-        padding: var(--spacing-md);
-    }
-    
-    #exercise-notes,
-    #report-text-output {
-        height: 80px;
-    }
-    
-    .exercise-card {
-        padding: var(--spacing-md);
+        margin: var(--spacing-md) 0;
     }
 }
 
-/* Animações responsivas */
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+/* Garantias finais */
+body {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+/* Suporte para modo escuro do sistema */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-primary: #0f0f0f;
+        --secondary-dark: #1a1a1a;
+        --bg-card: #222222;
+        --text-primary: #ffffff;
+        --text-secondary: #b2bec3;
     }
 }
 
-/* Suporte para telas touch */
-@media (hover: none) and (pointer: coarse) {
-    .workout-card:hover {
-        transform: none;
-    }
-    
-    .timer-btn:hover,
-    .btn-finish-workout:hover,
-    .btn-skip-rest:hover {
-        transform: none;
-    }
-    
-    /* Aumentar área de toque para mobile */
-    .checkbox-custom,
-    .slider-nav,
-    .weight-btn,
-    .weight-preset,
-    .option-btn {
-        min-height: 44px;
-        min-width: 44px;
-    }
-    
-    .checkbox-custom {
-        width: 32px;
-        height: 32px;
-    }
-}
-
-/* Dark mode forçado */
+/* Remover qualquer possibilidade de modo claro */
 @media (prefers-color-scheme: light) {
+    :root {
+        --bg-primary: #0f0f0f !important;
+        --secondary-dark: #1a1a1a !important;
+        --bg-card: #222222 !important;
+        --text-primary: #ffffff !important;
+        --text-secondary: #b2bec3 !important;
+    }
+    
     body {
-        background-color: var(--bg-primary) !important;
-        color: var(--text-primary) !important;
+        background-color: #0f0f0f !important;
+        color: #ffffff !important;
     }
 }
