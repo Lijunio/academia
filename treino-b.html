@@ -6,14 +6,13 @@
     <title>Treino B</title>
     <link rel="icon" href="assets/icons/treinoB.ico" type="image/x-icon">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="workout-page workout-b-page">
-    <!-- Overlay de Descanso -->
+    <!-- Overlay de Descanso (INICIALMENTE ESCONDIDO) -->
     <div class="rest-overlay">
         <div class="rest-modal">
             <div class="rest-header">
@@ -22,19 +21,19 @@
             </div>
             
             <div class="rest-timer">
-            <div class="timer-circle">
-                <svg class="progress-ring" viewBox="0 0 100 100">
-                    <circle class="progress-ring-circle" 
-                            stroke-width="8" 
-                            fill="transparent" 
-                            r="45" 
-                            cx="50" 
-                            cy="50"/>
-                </svg>
-                <div class="timer-display">
-                    <span id="rest-minutes">00</span>:<span id="rest-seconds">45</span>
+                <div class="timer-circle">
+                    <svg class="progress-ring" viewBox="0 0 100 100">
+                        <circle class="progress-ring-circle" 
+                                stroke-width="8" 
+                                fill="transparent" 
+                                r="45" 
+                                cx="50" 
+                                cy="50"/>
+                    </svg>
+                    <div class="timer-display">
+                        <span id="rest-minutes">00</span>:<span id="rest-seconds">45</span>
+                    </div>
                 </div>
-            </div>
                 <p class="rest-instruction">Mantenha a respiração controlada</p>
             </div>
 
@@ -117,19 +116,23 @@
                     <div class="report-stats">
                         <div class="stat">
                             <i class="fas fa-dumbbell"></i>
-                            <span id="report-total-exercises">0</span> exercícios
+                            <span id="report-total-exercises">0</span>
+                            <small>exercícios</small>
                         </div>
                         <div class="stat">
                             <i class="fas fa-weight-hanging"></i>
-                            <span id="report-completed-exercises">0</span> concluídos
+                            <span id="report-completed-exercises">0</span>
+                            <small>concluídos</small>
                         </div>
                         <div class="stat">
                             <i class="fas fa-times-circle"></i>
-                            <span id="report-uncompleted-exercises">0</span> pendentes
+                            <span id="report-uncompleted-exercises">0</span>
+                            <small>pendentes</small>
                         </div>
                         <div class="stat">
                             <i class="fas fa-weight-hanging"></i>
-                            <span id="report-avg-weight">0</span> kg média
+                            <span id="report-avg-weight">0</span>
+                            <small>kg média</small>
                         </div>
                     </div>
                 </div>
@@ -138,7 +141,7 @@
                     <!-- Lista de exercícios será preenchida aqui -->
                 </div>
                 
-                <!-- Seção de Justificativas (aparece apenas se houver) -->
+                <!-- Seção de Justificativas -->
                 <div class="report-section" id="justifications-section" style="display: none;">
                     <h4><i class="fas fa-comment-dots"></i> Justificativas dos Exercícios Não Realizados</h4>
                     <div class="justifications-container" id="justifications-list">
@@ -152,7 +155,8 @@
                         <p><strong>Data:</strong> <span id="summary-date"></span></p>
                         <p><strong>Treino:</strong> <span id="summary-workout"></span></p>
                         <p><strong>Exercícios completos:</strong> <span id="summary-completed"></span></p>
-                        <p><strong>Peso total levantado (estimado):</strong> <span id="summary-total-weight"></span> kg</p>
+                        <p><strong>Tempo de treino:</strong> <span id="summary-workout-time"></span></p>
+                        <p><strong>Peso total levantado:</strong> <span id="summary-total-weight"></span> kg</p>
                         <p><strong>Observações:</strong> <span id="summary-notes"></span></p>
                     </div>
                 </div>
@@ -167,7 +171,7 @@
                 
                 <div class="report-actions">
                     <button class="btn-telegram-report" id="telegram-report-btn">
-                        <i class="fab fa-telegram"></i> Enviar
+                        <i class="fab fa-telegram"></i> Enviar para Telegram
                     </button>
                 </div>
             </div>
@@ -282,170 +286,131 @@
         <source src="assets/audio/tempodetreino.mp3" type="audio/mpeg">
     </audio>
 
-    <script src="js/timer.js"></script>
     <script src="js/main.js"></script>
-<script>
-    // Treino B - Dados dos exercícios com IMAGENS LOCAIS E CARROSSEL
-    const workoutBExercises = [
-        // COSTAS (LARGURA + ESPESSURA)
-        {
-            id: 1,
-            name: "Barra fixa ou puxada frente",
-            sets: "4x 6–8",
-            description: "Grande dorsal (largura)",
-            muscleGroup: "costas",
-            images: [
-                "imagens/treino-b/barrafixa.gif",
-                "imagens/treino-b/puxadafrente.gif"
-            ]
-        },
-        {
-            id: 2,
-            name: "Remada curvada barra",
-            sets: "3x 8–10",
-            description: "Espessura",
-            muscleGroup: "costas",
-            images: [
-                "imagens/treino-b/remadacurvada.webp"
-            ]
-        },
-        {
-            id: 3,
-            name: "Remada baixa",
-            sets: "3x 10–12",
-            description: "Costas médias",
-            muscleGroup: "costas",
-            images: [
-                "imagens/treino-b/remadabaixa.gif"
-            ]
-        },
-        // OMBRO POSTERIOR + TRAPÉZIO
-        {
-            id: 4,
-            name: "Elevação posterior",
-            sets: "3x 12–15",
-            description: "Ombro posterior",
-            muscleGroup: "ombro",
-            images: [
-                "imagens/treino-b/elevacaoposterior.gif",
-                "imagens/treino-b/maquinaposterior.gif"
-            ]
-        },
-        {
-            id: 5,
-            name: "Encolhimento barra",
-            sets: "4x 10–12",
-            description: "Trapézio superior",
-            muscleGroup: "ombro",
-            images: [
-                "imagens/treino-b/encolhimento.gif"
-            ]
-        },
-        // BÍCEPS
-        {
-            id: 6,
-            name: "Rosca direta",
-            sets: "3x 8–10",
-            description: "Cabeça curta e longa",
-            muscleGroup: "biceps",
-            images: [
-                "imagens/treino-b/roscadireta.gif"
-            ]
-        },
-        {
-            id: 7,
-            name: "Rosca alternada inclinada",
-            sets: "3x 10–12",
-            description: "Ênfase cabeça longa",
-            muscleGroup: "biceps",
-            images: [
-                "imagens/treino-b/roscainclinada.gif"
-            ]
-        },
-        // ANTEBRAÇO
-        {
-            id: 8,
-            name: "Rosca punho",
-            sets: "3x 15–20",
-            description: "Flexores do antebraço",
-            muscleGroup: "antebraco",
-            images: [
-                "imagens/treino-b/roscapunho1.gif",
-                "imagens/treino-b/roscapunho2.gif"
-            ]
-        },
-        {
-            id: 9,
-            name: "Rosca punho reversa",
-            sets: "3x 15–20",
-            description: "Extensores do antebraço",
-            muscleGroup: "antebraco",
-            images: [
-                "imagens/treino-b/roscapunho-reversa1.gif",
-                "imagens/treino-b/roscapunho-reversa2.gif"
-            ]
-        },
-        // POSTERIOR + GLÚTEO
-        {
-            id: 10,
-            name: "Levantamento terra romeno",
-            sets: "4x 6–8",
-            description: "Posterior + Glúteo",
-            muscleGroup: "posterior",
-            images: [
-                "imagens/treino-b/levantamentoterra.gif",
-                "imagens/treino-b/stiff.gif"
-            ]
-        },
-        {
-            id: 11,
-            name: "Mesa flexora",
-            sets: "3x 10–12",
-            description: "Posterior",
-            muscleGroup: "posterior",
-            images: [
-                "imagens/treino-b/mesaflexora.webp"
-            ]
-        },
-        {
-            id: 12,
-            name: "Afundo andando ou no lugar",
-            sets: "3x 10 cada perna",
-            description: "Quadríceps + Glúteo",
-            muscleGroup: "posterior",
-            images: [
-                "imagens/treino-b/afundo.gif"
-            ]
-        },
-        // PANTURRILHAS
-        {
-            id: 13,
-            name: "Panturrilha em pé",
-            sets: "4x 10–15",
-            description: "Panturrilha (gastrocnêmio)",
-            muscleGroup: "panturrilha",
-            images: [
-                "imagens/treino-b/panturrilha-pe.gif"
-            ]
-        },
-        {
-            id: 14,
-            name: "Panturrilha sentada",
-            sets: "3x 15–20",
-            description: "Panturrilha (sóleo)",
-            muscleGroup: "panturrilha",
-            images: [
-                "imagens/treino-b/panturrilha-sentada.gif"
-            ]
-        }
-    ];
+    <script src="js/timer.js"></script>
+    <script>
+        // Treino B - Dados dos exercícios
+        const workoutBExercises = [
+            {
+                id: 1,
+                name: "Barra fixa ou puxada frente",
+                sets: "4x 6–8",
+                description: "Grande dorsal (largura)",
+                muscleGroup: "costas",
+                images: ["imagens/treino-b/barrafixa.gif", "imagens/treino-b/puxadafrente.gif"]
+            },
+            {
+                id: 2,
+                name: "Remada curvada barra",
+                sets: "3x 8–10",
+                description: "Espessura",
+                muscleGroup: "costas",
+                images: ["imagens/treino-b/remadacurvada.webp"]
+            },
+            {
+                id: 3,
+                name: "Remada baixa",
+                sets: "3x 10–12",
+                description: "Costas médias",
+                muscleGroup: "costas",
+                images: ["imagens/treino-b/remadabaixa.gif"]
+            },
+            {
+                id: 4,
+                name: "Elevação posterior",
+                sets: "3x 12–15",
+                description: "Ombro posterior",
+                muscleGroup: "ombro",
+                images: ["imagens/treino-b/elevacaoposterior.gif", "imagens/treino-b/maquinaposterior.gif"]
+            },
+            {
+                id: 5,
+                name: "Encolhimento barra",
+                sets: "4x 10–12",
+                description: "Trapézio superior",
+                muscleGroup: "ombro",
+                images: ["imagens/treino-b/encolhimento.gif"]
+            },
+            {
+                id: 6,
+                name: "Rosca direta",
+                sets: "3x 8–10",
+                description: "Cabeça curta e longa",
+                muscleGroup: "biceps",
+                images: ["imagens/treino-b/roscadireta.gif"]
+            },
+            {
+                id: 7,
+                name: "Rosca alternada inclinada",
+                sets: "3x 10–12",
+                description: "Ênfase cabeça longa",
+                muscleGroup: "biceps",
+                images: ["imagens/treino-b/roscainclinada.gif"]
+            },
+            {
+                id: 8,
+                name: "Rosca punho",
+                sets: "3x 15–20",
+                description: "Flexores do antebraço",
+                muscleGroup: "antebraco",
+                images: ["imagens/treino-b/roscapunho1.gif", "imagens/treino-b/roscapunho2.gif"]
+            },
+            {
+                id: 9,
+                name: "Rosca punho reversa",
+                sets: "3x 15–20",
+                description: "Extensores do antebraço",
+                muscleGroup: "antebraco",
+                images: ["imagens/treino-b/roscapunho-reversa1.gif", "imagens/treino-b/roscapunho-reversa2.gif"]
+            },
+            {
+                id: 10,
+                name: "Levantamento terra romeno",
+                sets: "4x 6–8",
+                description: "Posterior + Glúteo",
+                muscleGroup: "posterior",
+                images: ["imagens/treino-b/levantamentoterra.gif", "imagens/treino-b/stiff.gif"]
+            },
+            {
+                id: 11,
+                name: "Mesa flexora",
+                sets: "3x 10–12",
+                description: "Posterior",
+                muscleGroup: "posterior",
+                images: ["imagens/treino-b/mesaflexora.webp"]
+            },
+            {
+                id: 12,
+                name: "Afundo andando ou no lugar",
+                sets: "3x 10 cada perna",
+                description: "Quadríceps + Glúteo",
+                muscleGroup: "posterior",
+                images: ["imagens/treino-b/afundo.gif"]
+            },
+            {
+                id: 13,
+                name: "Panturrilha em pé",
+                sets: "4x 10–15",
+                description: "Panturrilha (gastrocnêmio)",
+                muscleGroup: "panturrilha",
+                images: ["imagens/treino-b/panturrilha-pe.gif"]
+            },
+            {
+                id: 14,
+                name: "Panturrilha sentada",
+                sets: "3x 15–20",
+                description: "Panturrilha (sóleo)",
+                muscleGroup: "panturrilha",
+                images: ["imagens/treino-b/panturrilha-sentada.gif"]
+            }
+        ];
 
-    // Inicializar treino B
-    document.addEventListener('DOMContentLoaded', function() {
-        if (typeof initWorkout === 'function') {
-            initWorkout('B', workoutBExercises);
-        }
-    });
-</script>
+        // Inicializar treino B
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.workoutManager) {
+                window.workoutManager.initWorkout('B', workoutBExercises);
+            }
+        });
+    </script>
 </body>
 </html>
