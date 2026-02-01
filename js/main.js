@@ -1,13 +1,14 @@
-// ACADEMIA ELIJUNIO - Main JavaScript com Sistema de Pesos e Relatórios
+// ACADEMIA ELIJUNIO - Main JavaScript com Sistema de Pesos, Relatórios e Justificativas
 
 class WorkoutManager {
     constructor() {
         this.currentWorkout = null;
         this.exercises = [];
         this.completedExercises = new Set();
-        this.exerciseData = {}; // Armazenar dados dos exercícios (peso, variação, notas)
+        this.exerciseData = {};
         this.isResting = false;
-        this.currentExerciseId = null; // Exercício atual para registro de peso
+        this.currentExerciseId = null;
+        this.attemptedGenerateWithoutCompletion = false;
         
         this.init();
     }
@@ -42,17 +43,13 @@ class WorkoutManager {
             cancelWeightBtn.addEventListener('click', () => this.hideWeightModal());
         }
 
-        // Botão fechar modal de peso
-        const closeWeightModal = document.querySelector('.close-weight-modal');
-        if (closeWeightModal) {
-            closeWeightModal.addEventListener('click', () => this.hideWeightModal());
-        }
-
-        // Botão fechar modal de relatório
-        const closeReportModal = document.querySelector('.close-report-modal');
-        if (closeReportModal) {
-            closeReportModal.addEventListener('click', () => this.hideReportModal());
-        }
+        // Botões de fechar modal
+        document.querySelectorAll('.close-weight-modal, .close-report-modal').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const modal = e.target.closest('.modal-overlay');
+                if (modal) modal.classList.remove('active');
+            });
+        });
 
         // Botões de incremento/decremento de peso
         const decreaseBtn = document.querySelector('.weight-btn.decrease');
@@ -92,18 +89,18 @@ class WorkoutManager {
         }
     }
 
-    // Inicializar treino específico
+    // ===== SISTEMA DE TREINO =====
     initWorkout(type, exercises) {
         this.currentWorkout = type;
         this.exercises = exercises;
-        this.exerciseData = {}; // Resetar dados
+        this.exerciseData = {};
         this.completedExercises.clear();
+        this.attemptedGenerateWithoutCompletion = false;
         this.renderExercises();
         this.updateStats();
         this.loadSavedData();
     }
 
-    // Renderizar lista de exercícios
     renderExercises() {
         const container = document.getElementById('exercises-list');
         if (!container) return;
@@ -131,7 +128,6 @@ class WorkoutManager {
         });
     }
 
-    // Criar elemento de exercício
     createExerciseElement(exercise, number) {
         const isCompleted = this.completedExercises.has(exercise.id);
         const exerciseData = this.exerciseData[exercise.id];
@@ -202,7 +198,6 @@ class WorkoutManager {
         return div;
     }
 
-    // Criar carrossel de imagens
     createImageSlider(images) {
         if (!images || images.length === 0) return '';
         
@@ -235,7 +230,6 @@ class WorkoutManager {
         `;
     }
 
-    // Marcar exercício como concluído
     handleExerciseComplete(event) {
         const checkbox = event.target;
         const exerciseId = parseInt(checkbox.dataset.id);
@@ -245,20 +239,14 @@ class WorkoutManager {
         if (!exercise) return;
 
         if (checkbox.checked) {
-            // Salvar ID do exercício atual
             this.currentExerciseId = exerciseId;
-            
-            // Mostrar modal para registrar peso
             this.showWeightModal(exercise);
-            
         } else {
-            // Desmarcar exercício
             this.completedExercises.delete(exerciseId);
             delete this.exerciseData[exerciseId];
             
             if (exerciseCard) {
                 exerciseCard.classList.remove('completed');
-                // Remover info de peso
                 const weightInfo = exerciseCard.querySelector('.exercise-weight-info');
                 if (weightInfo) weightInfo.remove();
             }
@@ -269,7 +257,7 @@ class WorkoutManager {
         }
     }
 
-    // Mostrar modal de registro de peso
+    // ===== SISTEMA DE PESOS =====
     showWeightModal(exercise) {
         const modal = document.querySelector('.weight-modal-overlay');
         const variationsContainer = document.getElementById('exercise-variations');
@@ -278,7 +266,6 @@ class WorkoutManager {
         
         if (!modal || !variationsContainer) return;
         
-        // Configurar variações baseadas nas imagens
         const hasMultipleImages = exercise.images && exercise.images.length > 1;
         
         let variationsHtml = '';
@@ -314,7 +301,6 @@ class WorkoutManager {
         
         variationsContainer.innerHTML = variationsHtml;
         
-        // Adicionar eventos às variações
         if (hasMultipleImages) {
             document.querySelectorAll('.variation-option').forEach(option => {
                 option.addEventListener('click', () => {
@@ -323,29 +309,23 @@ class WorkoutManager {
                 });
             });
             
-            // Selecionar primeira variação por padrão
             const firstOption = variationsContainer.querySelector('.variation-option');
             if (firstOption) firstOption.classList.add('selected');
         }
         
-        // Resetar inputs
         weightInput.value = '20';
         notesInput.value = '';
         
-        // Limpar presets ativos
         document.querySelectorAll('.weight-preset').forEach(p => p.classList.remove('active'));
         
-        // Mostrar modal
         modal.classList.add('active');
     }
 
-    // Esconder modal de peso
     hideWeightModal() {
         const modal = document.querySelector('.weight-modal-overlay');
         if (modal) modal.classList.remove('active');
     }
 
-    // Ajustar peso
     adjustWeight(amount) {
         const weightInput = document.getElementById('weight-input');
         if (!weightInput) return;
@@ -353,30 +333,23 @@ class WorkoutManager {
         let currentWeight = parseFloat(weightInput.value) || 0;
         let newWeight = currentWeight + amount;
         
-        // Limitar entre 0 e 300 kg
         newWeight = Math.max(0, Math.min(300, newWeight));
         
         weightInput.value = newWeight.toFixed(1);
-        
-        // Atualizar preset ativo
         this.updateActivePreset(newWeight);
     }
 
-    // Definir peso específico
     setWeight(weight) {
         const weightInput = document.getElementById('weight-input');
         if (!weightInput) return;
-        
         weightInput.value = weight;
     }
 
-    // Definir preset ativo
     setActivePreset(button) {
         document.querySelectorAll('.weight-preset').forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
     }
 
-    // Atualizar preset ativo baseado no peso
     updateActivePreset(weight) {
         document.querySelectorAll('.weight-preset').forEach(btn => {
             btn.classList.remove('active');
@@ -386,7 +359,6 @@ class WorkoutManager {
         });
     }
 
-    // Salvar peso do exercício
     saveWeight() {
         if (!this.currentExerciseId) return;
         
@@ -405,7 +377,6 @@ class WorkoutManager {
         const exercise = this.exercises.find(e => e.id === this.currentExerciseId);
         if (!exercise) return;
         
-        // Salvar dados do exercício
         this.exerciseData[this.currentExerciseId] = {
             weight: weight,
             variation: selectedVariation ? selectedVariation.querySelector('.variation-name').textContent : null,
@@ -415,40 +386,26 @@ class WorkoutManager {
             sets: exercise.sets
         };
         
-        // Marcar como concluído
         this.completedExercises.add(this.currentExerciseId);
-        
-        // Atualizar interface
         this.updateExerciseCard(this.currentExerciseId);
         this.updateProgress();
         this.updateStats();
         this.saveData();
-        
-        // Esconder modal
         this.hideWeightModal();
         
-        // Encontrar próximo exercício não concluído
         const nextIndex = this.findNextUncompletedExercise();
-        
-        // Determinar tempo de descanso
         if (nextIndex !== -1 && nextIndex < this.exercises.length) {
             const currentExercise = this.exercises.find(e => e.id === this.currentExerciseId);
             const nextExercise = this.exercises[nextIndex];
             
-            let restTime = 45; // 45 segundos padrão
-            
-            if (currentExercise && nextExercise) {
-                // Se grupos musculares diferentes, 90 segundos
-                if (currentExercise.muscleGroup !== nextExercise.muscleGroup) {
-                    restTime = 90;
-                }
-                
-                // Mostrar overlay de descanso
-                this.showRestOverlay(restTime, nextExercise);
+            let restTime = 45;
+            if (currentExercise && nextExercise && currentExercise.muscleGroup !== nextExercise.muscleGroup) {
+                restTime = 90;
             }
+            
+            this.showRestOverlay(restTime, nextExercise);
         }
         
-        // Reproduzir som de confirmação
         const letsgoSound = document.getElementById('letsgo-sound');
         if (letsgoSound) {
             letsgoSound.currentTime = 0;
@@ -456,7 +413,6 @@ class WorkoutManager {
         }
     }
 
-    // Atualizar card do exercício
     updateExerciseCard(exerciseId) {
         const exercise = this.exercises.find(e => e.id === exerciseId);
         if (!exercise) return;
@@ -467,20 +423,16 @@ class WorkoutManager {
         const exerciseData = this.exerciseData[exerciseId];
         const hasWeightData = exerciseData && exerciseData.weight;
         
-        // Atualizar classe completed
         exerciseCard.classList.add('completed');
         
-        // Atualizar checkbox
         const checkbox = exerciseCard.querySelector('.checkbox-input');
         const checkboxLabel = exerciseCard.querySelector('.checkbox-label');
         if (checkbox) checkbox.checked = true;
         if (checkboxLabel) checkboxLabel.textContent = 'Concluído ✓';
         
-        // Remover info de peso existente
         const existingWeightInfo = exerciseCard.querySelector('.exercise-weight-info');
         if (existingWeightInfo) existingWeightInfo.remove();
         
-        // Adicionar nova info de peso
         if (hasWeightData) {
             const weightInfoHtml = `
                 <div class="exercise-weight-info">
@@ -512,7 +464,6 @@ class WorkoutManager {
                 </div>
             `;
             
-            // Inserir antes do exercise-complete
             const exerciseComplete = exerciseCard.querySelector('.exercise-complete');
             if (exerciseComplete) {
                 exerciseComplete.insertAdjacentHTML('beforebegin', weightInfoHtml);
@@ -520,17 +471,16 @@ class WorkoutManager {
         }
     }
 
-    // Encontrar próximo exercício não concluído
+    // ===== SISTEMA DE DESCANSO =====
     findNextUncompletedExercise() {
         for (let i = 0; i < this.exercises.length; i++) {
             if (!this.completedExercises.has(this.exercises[i].id)) {
                 return i;
             }
         }
-        return -1; // Todos concluídos
+        return -1;
     }
 
-    // Mostrar overlay de descanso
     showRestOverlay(seconds, nextExercise) {
         this.isResting = true;
         
@@ -568,11 +518,9 @@ class WorkoutManager {
             overlay.classList.add('active');
         }
         
-        // Iniciar timer de descanso
         this.startRestTimer(seconds);
     }
 
-    // Iniciar timer de descanso
     startRestTimer(seconds) {
         const minutesDisplay = document.getElementById('rest-minutes');
         const secondsDisplay = document.getElementById('rest-seconds');
@@ -614,7 +562,6 @@ class WorkoutManager {
         updateTimer();
     }
 
-    // Finalizar timer de descanso
     endRestTimer() {
         this.isResting = false;
         
@@ -632,7 +579,6 @@ class WorkoutManager {
         this.updateProgress();
     }
 
-    // Pular descanso
     skipRest() {
         this.isResting = false;
         
@@ -642,7 +588,6 @@ class WorkoutManager {
         }
     }
 
-    // Navegação do carrossel
     handleSliderNav(event) {
         const button = event.currentTarget;
         const slider = button.closest('.image-slider');
@@ -672,7 +617,6 @@ class WorkoutManager {
         slider.dataset.current = nextIndex;
     }
 
-    // Navegação por dots do carrossel
     handleSliderDot(event) {
         const dot = event.currentTarget;
         const index = parseInt(dot.dataset.index);
@@ -697,7 +641,6 @@ class WorkoutManager {
         slider.dataset.current = index;
     }
 
-    // Atualizar progresso geral
     updateProgress() {
         const totalExercises = this.exercises.length;
         const completed = this.completedExercises.size;
@@ -714,18 +657,15 @@ class WorkoutManager {
         }
     }
 
-    // Atualizar estatísticas
     updateStats() {
         const totalExercises = this.exercises.length;
         const completed = this.completedExercises.size;
         
-        // Exercícios concluídos
         const completedElement = document.getElementById('completed-exercises');
         if (completedElement) {
             completedElement.textContent = completed;
         }
         
-        // Séries totais
         const totalSetsElement = document.getElementById('total-sets');
         if (totalSetsElement && this.exercises.length > 0) {
             let totalSets = 0;
@@ -738,7 +678,6 @@ class WorkoutManager {
             totalSetsElement.textContent = totalSets;
         }
         
-        // Peso total registrado
         const totalWeightElement = document.getElementById('total-weight');
         if (totalWeightElement) {
             let totalWeight = 0;
@@ -755,59 +694,265 @@ class WorkoutManager {
         }
     }
 
-    // Gerar relatório
+    // ===== SISTEMA DE RELATÓRIOS E JUSTIFICATIVAS =====
     generateReport() {
         const completedCount = this.completedExercises.size;
         const totalCount = this.exercises.length;
-        
-        if (completedCount === 0) {
-            alert('Complete pelo menos um exercício antes de gerar o relatório!');
-            return;
+        const allCompleted = completedCount === totalCount;
+
+        if (allCompleted) {
+            this.generateFullReport();
+        } else {
+            if (this.attemptedGenerateWithoutCompletion) {
+                this.showJustificationsModal();
+            } else {
+                this.showIncompleteAlert();
+                this.attemptedGenerateWithoutCompletion = true;
+            }
         }
-        
-        this.showReportModal();
     }
 
-    // Mostrar modal de relatório
-    showReportModal() {
+    showIncompleteAlert() {
+        const uncompletedCount = this.exercises.length - this.completedExercises.size;
+        
+        const alertHtml = `
+            <div class="incomplete-alert-modal modal-overlay active">
+                <div class="incomplete-alert">
+                    <div class="alert-header">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Treino Incompleto</h3>
+                    </div>
+                    <div class="alert-content">
+                        <p>Você completou <strong>${this.completedExercises.size}</strong> de <strong>${this.exercises.length}</strong> exercícios.</p>
+                        <p><strong>${uncompletedCount} exercício(s) não foi(ram) marcado(s) como concluído(s).</strong></p>
+                        <div class="uncompleted-list">
+                            <h4>Exercícios pendentes:</h4>
+                            <ul>
+                                ${this.getUncompletedExercises().map(ex => 
+                                    `<li><i class="fas fa-times-circle"></i> ${ex.name} (${ex.sets})</li>`
+                                ).join('')}
+                            </ul>
+                        </div>
+                        <p class="alert-info">Clique novamente em "Gerar Relatório" se desejar justificar os exercícios não realizados.</p>
+                    </div>
+                    <div class="alert-actions">
+                        <button class="btn-cancel-alert">Voltar ao Treino</button>
+                        <button class="btn-justify-now">Justificar Agora</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', alertHtml);
+
+        const modal = document.querySelector('.incomplete-alert-modal');
+        const cancelBtn = modal.querySelector('.btn-cancel-alert');
+        const justifyBtn = modal.querySelector('.btn-justify-now');
+
+        cancelBtn.addEventListener('click', () => {
+            modal.remove();
+        });
+
+        justifyBtn.addEventListener('click', () => {
+            modal.remove();
+            this.showJustificationsModal();
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+    }
+
+    showJustificationsModal() {
+        const uncompletedExercises = this.getUncompletedExercises();
+        
+        const justificationsHtml = `
+            <div class="justifications-modal modal-overlay active">
+                <div class="justifications-modal-content">
+                    <div class="modal-header">
+                        <h2><i class="fas fa-clipboard-check"></i> Justificar Exercícios Não Realizados</h2>
+                        <button class="close-justifications-modal"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="modal-subtitle">Por favor, explique por que não realizou os exercícios abaixo:</p>
+                        
+                        <div class="justifications-list">
+                            ${uncompletedExercises.map((exercise, index) => `
+                                <div class="justification-item" data-id="${exercise.id}">
+                                    <div class="justification-header">
+                                        <div class="exercise-info">
+                                            <h4>${exercise.name}</h4>
+                                            <span class="exercise-sets">${exercise.sets}</span>
+                                        </div>
+                                        <div class="justification-toggle">
+                                            <button class="toggle-justification-btn ${this.exerciseData[exercise.id]?.justification ? 'active' : ''}" 
+                                                    data-id="${exercise.id}">
+                                                <i class="fas fa-check"></i>
+                                                <span>${this.exerciseData[exercise.id]?.justification ? 'Justificado' : 'Justificar'}</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="justification-textarea ${this.exerciseData[exercise.id]?.justification ? 'active' : ''}">
+                                        <textarea id="justification-${exercise.id}" 
+                                                  placeholder="Ex: Estava cansado, lesão, falta de tempo, equipamento ocupado..."
+                                                  rows="3">${this.exerciseData[exercise.id]?.justification || ''}</textarea>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="justification-options">
+                            <h4><i class="fas fa-lightbulb"></i> Sugestões de justificativas:</h4>
+                            <div class="options-grid">
+                                <button class="option-btn" data-text="Falta de tempo">Falta de tempo</button>
+                                <button class="option-btn" data-text="Equipamento ocupado">Equipamento ocupado</button>
+                                <button class="option-btn" data-text="Cansaço excessivo">Cansaço excessivo</button>
+                                <button class="option-btn" data-text="Lesão/Desconforto">Lesão/Desconforto</button>
+                                <button class="option-btn" data-text="Foco em outro grupo">Foco em outro grupo</button>
+                                <button class="option-btn" data-text="Outro motivo">Outro motivo</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-cancel-justifications">Cancelar</button>
+                        <button class="btn-save-justifications" id="save-justifications-btn">
+                            <i class="fas fa-save"></i> Salvar Justificativas e Gerar Relatório
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', justificationsHtml);
+
+        const modal = document.querySelector('.justifications-modal');
+        
+        modal.querySelectorAll('.toggle-justification-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const exerciseId = parseInt(e.currentTarget.dataset.id);
+                const textarea = modal.querySelector(`#justification-${exerciseId}`);
+                const textareaContainer = textarea.closest('.justification-textarea');
+                
+                textareaContainer.classList.toggle('active');
+                e.currentTarget.classList.toggle('active');
+                
+                if (textareaContainer.classList.contains('active')) {
+                    textarea.focus();
+                }
+            });
+        });
+
+        modal.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const text = e.currentTarget.dataset.text;
+                const activeTextarea = modal.querySelector('.justification-textarea.active textarea');
+                if (activeTextarea) {
+                    activeTextarea.value = text;
+                } else {
+                    this.showNotification('Selecione um exercício para justificar primeiro!', 'warning');
+                }
+            });
+        });
+
+        const cancelBtn = modal.querySelector('.btn-cancel-justifications');
+        cancelBtn.addEventListener('click', () => {
+            modal.remove();
+        });
+
+        const saveBtn = modal.querySelector('#save-justifications-btn');
+        saveBtn.addEventListener('click', () => this.saveJustifications());
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+    }
+
+    saveJustifications() {
+        const modal = document.querySelector('.justifications-modal');
+        if (!modal) return;
+
+        const justificationItems = modal.querySelectorAll('.justification-item');
+        let hasJustification = false;
+
+        justificationItems.forEach(item => {
+            const exerciseId = parseInt(item.dataset.id);
+            const textarea = item.querySelector('textarea');
+            const isActive = item.querySelector('.justification-textarea').classList.contains('active');
+            
+            if (isActive && textarea.value.trim()) {
+                if (!this.exerciseData[exerciseId]) {
+                    this.exerciseData[exerciseId] = {};
+                }
+                this.exerciseData[exerciseId].justification = textarea.value.trim();
+                this.exerciseData[exerciseId].justified = true;
+                hasJustification = true;
+            } else if (isActive && !textarea.value.trim()) {
+                this.showNotification('Preencha a justificativa para este exercício!', 'warning');
+                textarea.focus();
+                return false;
+            }
+        });
+
+        if (hasJustification) {
+            modal.remove();
+            this.generateFullReport(true);
+        }
+    }
+
+    getUncompletedExercises() {
+        return this.exercises.filter(ex => !this.completedExercises.has(ex.id));
+    }
+
+    generateFullReport(hasJustifications = false) {
+        this.showReportModal(hasJustifications);
+    }
+
+    showReportModal(hasJustifications = false) {
         const modal = document.querySelector('.report-modal-overlay');
         if (!modal) return;
-        
-        // Preencher dados do relatório
-        this.fillReportData();
-        
-        // Gerar texto do relatório
-        this.generateReportText();
-        
-        // Mostrar modal
+
+        this.fillReportData(hasJustifications);
+        this.generateReportText(hasJustifications);
         modal.classList.add('active');
     }
 
-    // Esconder modal de relatório
     hideReportModal() {
         const modal = document.querySelector('.report-modal-overlay');
         if (modal) modal.classList.remove('active');
     }
 
-    // Preencher dados do relatório
-    fillReportData() {
-        const workoutName = document.getElementById('report-workout-name');
-        const reportDate = document.getElementById('report-date');
-        const totalExercises = document.getElementById('report-total-exercises');
-        const avgWeight = document.getElementById('report-avg-weight');
-        const exercisesList = document.getElementById('report-exercises-list');
-        const summaryDate = document.getElementById('summary-date');
-        const summaryWorkout = document.getElementById('summary-workout');
-        const summaryCompleted = document.getElementById('summary-completed');
-        const summaryTotalWeight = document.getElementById('summary-total-weight');
-        const summaryNotes = document.getElementById('summary-notes');
-        
-        if (!workoutName || !exercisesList) return;
-        
-        // Nome do treino
-        workoutName.textContent = this.currentWorkout === 'A' ? 'Treino A (Peito + Quadríceps + Tríceps)' : 'Treino B (Costas + Posterior + Bíceps)';
-        
-        // Data atual
+    fillReportData(hasJustifications = false) {
+        const completedCount = this.completedExercises.size;
+        const totalCount = this.exercises.length;
+        const uncompletedCount = totalCount - completedCount;
+
+        const elements = {
+            workoutName: document.getElementById('report-workout-name'),
+            date: document.getElementById('report-date'),
+            totalExercises: document.getElementById('report-total-exercises'),
+            completedExercises: document.getElementById('report-completed-exercises'),
+            uncompletedExercises: document.getElementById('report-uncompleted-exercises'),
+            avgWeight: document.getElementById('report-avg-weight'),
+            exercisesList: document.getElementById('report-exercises-list'),
+            summaryDate: document.getElementById('summary-date'),
+            summaryWorkout: document.getElementById('summary-workout'),
+            summaryCompleted: document.getElementById('summary-completed'),
+            summaryTotalWeight: document.getElementById('summary-total-weight'),
+            summaryNotes: document.getElementById('summary-notes'),
+            justificationsSection: document.getElementById('justifications-section'),
+            justificationsList: document.getElementById('justifications-list')
+        };
+
+        if (elements.workoutName) {
+            elements.workoutName.textContent = this.currentWorkout === 'A' 
+                ? 'Treino A (Peito + Quadríceps + Tríceps)' 
+                : 'Treino B (Costas + Posterior + Bíceps)';
+        }
+
         const now = new Date();
         const dateStr = now.toLocaleDateString('pt-BR', { 
             weekday: 'long', 
@@ -817,17 +962,14 @@ class WorkoutManager {
             hour: '2-digit',
             minute: '2-digit'
         });
-        
-        if (reportDate) reportDate.textContent = dateStr;
-        if (summaryDate) summaryDate.textContent = dateStr;
-        
-        // Estatísticas
-        const completedCount = this.completedExercises.size;
-        const totalCount = this.exercises.length;
-        
-        if (totalExercises) totalExercises.textContent = completedCount;
-        
-        // Peso médio
+
+        if (elements.date) elements.date.textContent = dateStr;
+        if (elements.summaryDate) elements.summaryDate.textContent = dateStr;
+
+        if (elements.totalExercises) elements.totalExercises.textContent = totalCount;
+        if (elements.completedExercises) elements.completedExercises.textContent = completedCount;
+        if (elements.uncompletedExercises) elements.uncompletedExercises.textContent = uncompletedCount;
+
         let totalWeight = 0;
         let weightCount = 0;
         Object.values(this.exerciseData).forEach(data => {
@@ -836,82 +978,143 @@ class WorkoutManager {
                 weightCount++;
             }
         });
-        
+
         const avg = weightCount > 0 ? (totalWeight / weightCount).toFixed(1) : '0';
-        if (avgWeight) avgWeight.textContent = avg;
-        
-        // Lista de exercícios
-        exercisesList.innerHTML = '';
-        Object.entries(this.exerciseData).forEach(([id, data]) => {
-            const exercise = this.exercises.find(e => e.id === parseInt(id));
-            if (!exercise || !data.weight) return;
+        if (elements.avgWeight) elements.avgWeight.textContent = avg;
+
+        if (elements.exercisesList) {
+            elements.exercisesList.innerHTML = '';
             
-            const exerciseHtml = `
-                <div class="report-exercise-item">
-                    <div class="exercise-item-header">
-                        <div class="exercise-item-name">${exercise.name}</div>
-                        <div class="exercise-item-weight">${data.weight} kg</div>
-                    </div>
-                    <div class="exercise-item-details">
-                        <div class="exercise-item-detail">
-                            <i class="fas fa-layer-group"></i>
-                            <span class="label">Séries:</span>
-                            <span class="value">${exercise.sets}</span>
+            this.exercises.forEach(exercise => {
+                const exerciseData = this.exerciseData[exercise.id];
+                const isCompleted = this.completedExercises.has(exercise.id);
+                const hasWeight = exerciseData && exerciseData.weight;
+                const hasJustification = exerciseData && exerciseData.justification;
+
+                let statusClass = '';
+                let statusIcon = '';
+                let statusText = '';
+
+                if (isCompleted && hasWeight) {
+                    statusClass = 'completed';
+                    statusIcon = '<i class="fas fa-check-circle"></i>';
+                    statusText = 'Concluído';
+                } else if (hasJustification) {
+                    statusClass = 'justified';
+                    statusIcon = '<i class="fas fa-comment-alt"></i>';
+                    statusText = 'Justificado';
+                } else {
+                    statusClass = 'not-completed';
+                    statusIcon = '<i class="fas fa-times-circle"></i>';
+                    statusText = 'Não realizado';
+                }
+
+                const exerciseHtml = `
+                    <div class="report-exercise-item ${statusClass}">
+                        <div class="exercise-item-header">
+                            <div class="exercise-item-info">
+                                <div class="exercise-status">${statusIcon} ${statusText}</div>
+                                <div class="exercise-item-name">${exercise.name}</div>
+                            </div>
+                            ${hasWeight ? 
+                                `<div class="exercise-item-weight">${exerciseData.weight} kg</div>` : 
+                                `<div class="exercise-item-weight">-- kg</div>`
+                            }
                         </div>
-                        ${data.variation ? `
-                        <div class="exercise-item-detail">
-                            <i class="fas fa-exchange-alt"></i>
-                            <span class="label">Variação:</span>
-                            <span class="value">${data.variation}</span>
+                        
+                        <div class="exercise-item-details">
+                            <div class="exercise-item-detail">
+                                <i class="fas fa-layer-group"></i>
+                                <span class="label">Séries:</span>
+                                <span class="value">${exercise.sets}</span>
+                            </div>
+                            
+                            ${hasWeight && exerciseData.variation ? `
+                                <div class="exercise-item-detail">
+                                    <i class="fas fa-exchange-alt"></i>
+                                    <span class="label">Variação:</span>
+                                    <span class="value">${exerciseData.variation}</span>
+                                </div>
+                            ` : ''}
+                            
+                            ${hasWeight && exerciseData.notes ? `
+                                <div class="exercise-item-detail">
+                                    <i class="fas fa-sticky-note"></i>
+                                    <span class="label">Notas:</span>
+                                </div>
+                            ` : ''}
                         </div>
+                        
+                        ${hasWeight && exerciseData.notes ? `
+                            <div class="exercise-notes">
+                                ${exerciseData.notes}
+                            </div>
                         ` : ''}
-                        ${data.notes ? `
-                        <div class="exercise-item-detail">
-                            <i class="fas fa-sticky-note"></i>
-                            <span class="label">Notas:</span>
-                        </div>
+                        
+                        ${hasJustification ? `
+                            <div class="exercise-justification">
+                                <i class="fas fa-comment-dots"></i>
+                                <strong>Justificativa:</strong> ${exerciseData.justification}
+                            </div>
                         ` : ''}
                     </div>
-                    ${data.notes ? `
-                    <div class="exercise-notes" style="margin-top: 10px; color: var(--text-secondary); font-size: 0.9rem;">
-                        ${data.notes}
-                    </div>
-                    ` : ''}
-                </div>
-            `;
-            
-            exercisesList.insertAdjacentHTML('beforeend', exerciseHtml);
-        });
-        
-        // Resumo
-        if (summaryWorkout) {
-            summaryWorkout.textContent = this.currentWorkout === 'A' ? 'Treino A' : 'Treino B';
+                `;
+                
+                elements.exercisesList.insertAdjacentHTML('beforeend', exerciseHtml);
+            });
         }
-        
-        if (summaryCompleted) {
-            summaryCompleted.textContent = `${completedCount}/${totalCount}`;
+
+        if (elements.justificationsSection && elements.justificationsList) {
+            const justifiedExercises = this.exercises.filter(ex => 
+                this.exerciseData[ex.id] && this.exerciseData[ex.id].justification
+            );
+
+            if (justifiedExercises.length > 0) {
+                elements.justificationsSection.style.display = 'block';
+                elements.justificationsList.innerHTML = justifiedExercises.map(ex => {
+                    const data = this.exerciseData[ex.id];
+                    return `
+                        <div class="justification-summary-item">
+                            <div class="justification-exercise">
+                                <strong>${ex.name}</strong> (${ex.sets})
+                            </div>
+                            <div class="justification-text">
+                                ${data.justification}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                elements.justificationsSection.style.display = 'none';
+            }
         }
-        
-        if (summaryTotalWeight) {
-            summaryTotalWeight.textContent = `${totalWeight.toFixed(1)} kg`;
+
+        if (elements.summaryWorkout) {
+            elements.summaryWorkout.textContent = this.currentWorkout === 'A' ? 'Treino A' : 'Treino B';
         }
-        
-        // Notas gerais
+
+        if (elements.summaryCompleted) {
+            elements.summaryCompleted.textContent = `${completedCount}/${totalCount}`;
+        }
+
+        if (elements.summaryTotalWeight) {
+            elements.summaryTotalWeight.textContent = `${totalWeight.toFixed(1)} kg`;
+        }
+
         const allNotes = Object.values(this.exerciseData)
             .filter(data => data.notes)
             .map(data => data.notes)
             .join(' | ');
-        
-        if (summaryNotes) {
-            summaryNotes.textContent = allNotes || 'Nenhuma observação registrada';
+
+        if (elements.summaryNotes) {
+            elements.summaryNotes.textContent = allNotes || 'Nenhuma observação registrada';
         }
     }
 
-    // Gerar texto do relatório
-    generateReportText() {
+    generateReportText(hasJustifications = false) {
         const textOutput = document.getElementById('report-text-output');
         if (!textOutput) return;
-        
+
         const now = new Date();
         const dateStr = now.toLocaleDateString('pt-BR', { 
             weekday: 'long', 
@@ -919,81 +1122,121 @@ class WorkoutManager {
             month: 'long', 
             day: 'numeric'
         });
-        
+
         const timeStr = now.toLocaleTimeString('pt-BR', { 
             hour: '2-digit', 
             minute: '2-digit' 
         });
-        
-        const workoutName = this.currentWorkout === 'A' ? 
-            'TREINO A - Peito + Quadríceps + Tríceps' : 
-            'TREINO B - Costas + Posterior + Bíceps';
-        
+
+        const workoutName = this.currentWorkout === 'A' 
+            ? 'TREINO A - Peito + Quadríceps + Tríceps' 
+            : 'TREINO B - Costas + Posterior + Bíceps';
+
+        const completedCount = this.completedExercises.size;
+        const totalCount = this.exercises.length;
+        const completionRate = Math.round((completedCount / totalCount) * 100);
+
         let reportText = `🏋️‍♂️ *RELATÓRIO DE TREINO - ACADEMIA ELIJUNIO* 🏋️‍♂️\n\n`;
         reportText += `📅 Data: ${dateStr}\n`;
         reportText += `⏰ Horário: ${timeStr}\n`;
         reportText += `💪 Treino: ${workoutName}\n`;
-        reportText += `✅ Progresso: ${this.completedExercises.size}/${this.exercises.length} exercícios\n\n`;
-        reportText += `📊 *DESEMPENHO POR EXERCÍCIO:*\n\n`;
-        
-        // Calcular totais
-        let totalWeight = 0;
-        let completedWithWeight = 0;
-        
-        Object.entries(this.exerciseData).forEach(([id, data]) => {
-            const exercise = this.exercises.find(e => e.id === parseInt(id));
-            if (!exercise || !data.weight) return;
+        reportText += `✅ Progresso: ${completedCount}/${totalCount} exercícios (${completionRate}%)\n\n`;
+
+        const completedWithWeight = this.exercises.filter(ex => 
+            this.completedExercises.has(ex.id) && this.exerciseData[ex.id]?.weight
+        );
+
+        if (completedWithWeight.length > 0) {
+            reportText += `📊 *EXERCÍCIOS COMPLETOS:*\n\n`;
             
-            totalWeight += data.weight;
-            completedWithWeight++;
+            completedWithWeight.forEach(exercise => {
+                const data = this.exerciseData[exercise.id];
+                reportText += `✅ *${exercise.name}*\n`;
+                reportText += `   🔸 Peso: ${data.weight} kg\n`;
+                reportText += `   🔸 Séries: ${exercise.sets}\n`;
+                if (data.variation) {
+                    reportText += `   🔸 Variação: ${data.variation}\n`;
+                }
+                if (data.notes) {
+                    reportText += `   🔸 Observações: ${data.notes}\n`;
+                }
+                reportText += `\n`;
+            });
+        }
+
+        const justifiedExercises = this.exercises.filter(ex => 
+            this.exerciseData[ex.id]?.justification
+        );
+
+        if (justifiedExercises.length > 0) {
+            reportText += `📝 *EXERCÍCIOS JUSTIFICADOS:*\n\n`;
             
-            reportText += `➡️ *${exercise.name}*\n`;
-            reportText += `   🔸 Peso: ${data.weight} kg\n`;
-            reportText += `   🔸 Séries: ${exercise.sets}\n`;
-            if (data.variation) {
-                reportText += `   🔸 Variação: ${data.variation}\n`;
-            }
-            if (data.notes) {
-                reportText += `   🔸 Observações: ${data.notes}\n`;
-            }
+            justifiedExercises.forEach(exercise => {
+                const data = this.exerciseData[exercise.id];
+                reportText += `💬 *${exercise.name}*\n`;
+                reportText += `   🔸 Status: Não realizado\n`;
+                reportText += `   🔸 Justificativa: ${data.justification}\n`;
+                reportText += `   🔸 Séries planejadas: ${exercise.sets}\n\n`;
+            });
+        }
+
+        const uncompletedWithoutJustification = this.exercises.filter(ex => 
+            !this.completedExercises.has(ex.id) && !this.exerciseData[ex.id]?.justification
+        );
+
+        if (uncompletedWithoutJustification.length > 0) {
+            reportText += `⚠️ *EXERCÍCIOS NÃO REALIZADOS:*\n\n`;
+            
+            uncompletedWithoutJustification.forEach(exercise => {
+                reportText += `❌ ${exercise.name} (${exercise.sets})\n`;
+            });
             reportText += `\n`;
+        }
+
+        let totalWeight = 0;
+        Object.values(this.exerciseData).forEach(data => {
+            if (data.weight) totalWeight += data.weight;
         });
-        
-        const avgWeight = completedWithWeight > 0 ? (totalWeight / completedWithWeight).toFixed(1) : '0';
-        
+
         reportText += `📈 *RESUMO GERAL:*\n`;
-        reportText += `   ✅ Exercícios completos: ${this.completedExercises.size}\n`;
+        reportText += `   ✅ Exercícios completos: ${completedCount}\n`;
+        reportText += `   💬 Exercícios justificados: ${justifiedExercises.length}\n`;
+        reportText += `   ❌ Exercícios não realizados: ${uncompletedWithoutJustification.length}\n`;
         reportText += `   🏋️ Peso total levantado: ${totalWeight.toFixed(1)} kg\n`;
-        reportText += `   ⚖️ Peso médio: ${avgWeight} kg\n`;
+        reportText += `   ⚖️ Peso médio (exercícios com peso): ${completedWithWeight.length > 0 ? (totalWeight / completedWithWeight.length).toFixed(1) : '0'} kg\n`;
         reportText += `   ⏱️ Tempo estimado: ${this.calculateEstimatedTime()} minutos\n\n`;
+
+        if (completionRate === 100) {
+            reportText += `🎉 *TREINO COMPLETO!* Parabéns pela dedicação!\n\n`;
+        } else if (justifiedExercises.length > 0) {
+            reportText += `👏 *TREINO PARCIALMENTE CONCLUÍDO* - Bom trabalho nas justificativas!\n\n`;
+        } else {
+            reportText += `💪 *CONTINUE ASSIM!* Cada treino conta!\n\n`;
+        }
+
         reportText += `🔥 *Foco • Disciplina • Resultados* 🔥\n`;
         reportText += `#AcademiaElijunio #${this.currentWorkout === 'A' ? 'TreinoA' : 'TreinoB'}`;
-        
+
         textOutput.value = reportText;
     }
 
-    // Calcular tempo estimado
     calculateEstimatedTime() {
         const completedCount = this.completedExercises.size;
-        // Estimativa: 5 minutos por exercício
         return completedCount * 5;
     }
 
-    // Copiar texto do relatório
     copyReportText() {
         const textOutput = document.getElementById('report-text-output');
         if (!textOutput) return;
         
         textOutput.select();
-        textOutput.setSelectionRange(0, 99999); // Para mobile
+        textOutput.setSelectionRange(0, 99999);
         
         try {
             const successful = document.execCommand('copy');
             if (successful) {
-                // Mostrar notificação
                 this.showNotification('Relatório copiado para a área de transferência!', 'success');
                 
-                // Mudar texto do botão temporariamente
                 const copyBtn = document.getElementById('copy-text-btn');
                 if (copyBtn) {
                     const originalText = copyBtn.innerHTML;
@@ -1012,23 +1255,19 @@ class WorkoutManager {
         }
     }
 
-    // Enviar para Telegram
     sendToTelegram() {
         const textOutput = document.getElementById('report-text-output');
         if (!textOutput || !textOutput.value) return;
         
         const reportText = encodeURIComponent(textOutput.value);
-        const telegramChatId = '-1002074157691'; // Substitua pelo ID do seu grupo
-        const telegramBotToken = 'SEU_BOT_TOKEN_AQUI'; // Você precisará criar um bot no Telegram
+        const telegramChatId = '-1002074157691';
+        const telegramBotToken = 'SEU_BOT_TOKEN_AQUI';
         
-        // Se não tiver token configurado, usar método alternativo
         if (telegramBotToken === 'SEU_BOT_TOKEN_AQUI') {
-            // Método alternativo: abrir Telegram com mensagem pré-preenchida
             const telegramURL = `https://t.me/share/url?url=${encodeURIComponent('Relatório de Treino')}&text=${reportText}`;
             window.open(telegramURL, '_blank');
             this.showNotification('Abra o Telegram para enviar o relatório!', 'info');
         } else {
-            // Método com bot (requer configuração)
             const apiURL = `https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&text=${reportText}&parse_mode=Markdown`;
             
             fetch(apiURL)
@@ -1047,49 +1286,40 @@ class WorkoutManager {
         }
     }
 
-    // Enviar para WhatsApp
     sendToWhatsApp() {
         const textOutput = document.getElementById('report-text-output');
         if (!textOutput || !textOutput.value) return;
         
         const reportText = encodeURIComponent(textOutput.value);
-        const phoneNumber = '31973112693'; // Seu número para WhatsApp individual
+        const phoneNumber = '31973112693';
+        const whatsappGroupLink = 'https://chat.whatsapp.com/SEU_LINK_DO_GRUPO';
         
-        // Para grupo do WhatsApp (necessário link do grupo)
-        const whatsappGroupLink = 'https://chat.whatsapp.com/SEU_LINK_DO_GRUPO'; // Substitua pelo link do seu grupo
-        
-        // Tentar enviar para grupo primeiro
         if (whatsappGroupLink !== 'https://chat.whatsapp.com/SEU_LINK_DO_GRUPO') {
-            // Método para grupo (requer que o usuário entre no link)
             window.open(whatsappGroupLink, '_blank');
             this.showNotification('Entre no grupo do WhatsApp para enviar o relatório!', 'info');
             
-            // Depois de entrar no grupo, enviar mensagem
             setTimeout(() => {
                 const whatsappURL = `https://wa.me/?text=${reportText}`;
                 window.open(whatsappURL, '_blank');
             }, 2000);
         } else {
-            // Método para número individual
             const whatsappURL = `https://wa.me/55${phoneNumber}?text=${reportText}`;
             window.open(whatsappURL, '_blank');
             this.showNotification('Abra o WhatsApp para enviar o relatório!', 'info');
         }
     }
 
-    // Mostrar notificação
     showNotification(message, type = 'info') {
-        // Remover notificação anterior se existir
         const existingNotification = document.querySelector('.notification');
         if (existingNotification) existingNotification.remove();
         
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
         notification.innerHTML = `
-            <div style="position: fixed; top: 20px; right: 20px; background: ${type === 'success' ? '#00d26a' : type === 'error' ? '#ff4757' : '#2e86de'}; 
+            <div style="position: fixed; top: 20px; right: 20px; background: ${type === 'success' ? '#00d26a' : type === 'error' ? '#ff4757' : type === 'warning' ? '#ffa502' : '#2e86de'}; 
                         color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); 
-                        z-index: 3000; display: flex; align-items: center; gap: 10px; max-width: 300px;">
-                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                        z-index: 3000; display: flex; align-items: center; gap: 10px; max-width: 300px; animation: slideIn 0.3s ease;">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
                 <span>${message}</span>
             </div>
         `;
@@ -1097,11 +1327,11 @@ class WorkoutManager {
         document.body.appendChild(notification);
         
         setTimeout(() => {
-            notification.remove();
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => notification.remove(), 300);
         }, 5000);
     }
 
-    // Salvar dados localmente
     saveData() {
         const data = {
             workout: this.currentWorkout,
@@ -1113,28 +1343,23 @@ class WorkoutManager {
         localStorage.setItem(`academia_elijunio_${this.currentWorkout}`, JSON.stringify(data));
     }
 
-    // Carregar dados salvos
     loadSavedData() {
         const saved = localStorage.getItem(`academia_elijunio_${this.currentWorkout}`);
         if (saved) {
             try {
                 const data = JSON.parse(saved);
                 
-                // Verificar se os dados são do mesmo treino
                 if (data.workout === this.currentWorkout) {
-                    // Carregar exercícios concluídos
                     if (data.completedExercises) {
                         data.completedExercises.forEach(id => {
                             this.completedExercises.add(id);
                         });
                     }
                     
-                    // Carregar dados dos exercícios
                     if (data.exerciseData) {
                         this.exerciseData = data.exerciseData;
                     }
                     
-                    // Atualizar interface
                     this.updateExerciseCardsFromData();
                     this.updateProgress();
                     this.updateStats();
@@ -1145,14 +1370,12 @@ class WorkoutManager {
         }
     }
 
-    // Atualizar cards de exercícios a partir dos dados salvos
     updateExerciseCardsFromData() {
         Object.keys(this.exerciseData).forEach(exerciseId => {
             this.updateExerciseCard(parseInt(exerciseId));
         });
     }
 
-    // Limpar dados salvos
     clearSavedData() {
         localStorage.removeItem(`academia_elijunio_${this.currentWorkout}`);
         this.completedExercises.clear();
@@ -1191,16 +1414,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
     
-    // Aplicar estilos iniciais para animação
     document.querySelectorAll('.workout-card, .exercise-card, .stat-card').forEach(el => {
         el.style.opacity = "0";
         el.style.transform = "translateY(20px)";
         el.style.transition = "opacity 0.5s ease, transform 0.5s ease";
     });
     
-    // Disparar animação na carga inicial
     setTimeout(animateOnScroll, 100);
-    
-    // Disparar animação no scroll
     window.addEventListener('scroll', animateOnScroll);
 });
