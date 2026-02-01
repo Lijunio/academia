@@ -93,7 +93,9 @@
         text-align: center;
     }
     
-    .rest-modal { 
+    .rest-modal,
+    .weight-modal,
+    .report-modal { 
         padding: var(--spacing-md); 
         width: 95%;
         margin: var(--spacing-sm);
@@ -151,6 +153,54 @@
         word-break: break-word;
         hyphens: auto;
     }
+    
+    /* Modais responsivos */
+    .weight-modal-actions {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .weight-modal-actions button {
+        width: 100%;
+    }
+    
+    .report-actions {
+        flex-direction: column;
+    }
+    
+    .report-actions button {
+        min-width: 100%;
+    }
+    
+    #report-text-output {
+        height: 150px;
+        font-size: 0.85rem;
+    }
+    
+    .weight-input-container {
+        gap: var(--spacing-xs);
+    }
+    
+    .weight-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+    
+    #weight-input {
+        width: 80px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+    
+    .weight-presets {
+        gap: var(--spacing-xs);
+    }
+    
+    .weight-preset {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
 }
 
 /* Tablets (481px - 768px) */
@@ -198,6 +248,21 @@
     .exercise-card {
         padding: var(--spacing-lg);
     }
+    
+    /* Modais tablets */
+    .weight-modal,
+    .report-modal {
+        max-width: 90%;
+    }
+    
+    .report-actions {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .report-actions button {
+        min-width: calc(50% - var(--spacing-md));
+    }
 }
 
 /* Tablets grandes e laptops pequenos (769px - 1024px) */
@@ -226,6 +291,15 @@
     
     .exercise-name {
         font-size: 1.6rem;
+    }
+    
+    /* Modais grandes tablets */
+    .weight-modal {
+        max-width: 600px;
+    }
+    
+    .report-modal {
+        max-width: 700px;
     }
 }
 
@@ -304,6 +378,17 @@
     .exercise-images { 
         height: 180px !important;
         margin: var(--spacing-md) 0;
+    }
+    
+    /* Modais em paisagem */
+    .weight-modal,
+    .report-modal {
+        max-height: 85vh;
+    }
+    
+    #exercise-notes,
+    #report-text-output {
+        height: 80px;
     }
 }
 
